@@ -43,7 +43,7 @@
   <ItemGroup>
     <Compile Include="Exigence.cs" />
     <Compile Include="Jalon.cs" />
-    <Compile Include="Projet.cs" />
+    <Compile Include="Project.cs" />
     <Compile Include="Tache.cs" />
     <Compile Include="Utilisateur.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

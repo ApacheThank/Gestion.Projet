@@ -12,13 +12,29 @@ namespace Gestion.Projet.Bean
         private string libelle;
         private string description;
         private DateTime date_debut;
-        private DateTime date_fin;
+        private DateTime date_reelle_debut;
+        private int duree;
+        private int id_tache_precedente;
         private int id_responsable;
         private int id_jalon;
+        private int avancement;
         private Utilisateur responsable;
         private Jalon jalon;
         private Tache tache_precedente;
 
+        public Tache(int id, string libelle, string description, DateTime date_debut, DateTime date_reelle_debut, int duree, int id_tache_precedente, int id_responsable, int id_jalon, int avancement)
+        {
+            this.id = id;
+            this.libelle = libelle;
+            this.description = description;
+            this.date_debut = date_debut;
+            this.date_reelle_debut = date_reelle_debut;
+            this.duree = duree;
+            this.id_tache_precedente = id_tache_precedente;
+            this.id_responsable = id_responsable;
+            this.id_jalon = id_jalon;
+            this.avancement = avancement;
+        }
 
         public int Id
         {
@@ -46,8 +62,20 @@ namespace Gestion.Projet.Bean
 
         public DateTime Date_fin
         {
-            get { return this.date_fin; }
-            set { this.date_fin = value; }
+            get { return this.date_reelle_debut; }
+            set { this.date_reelle_debut = value; }
+        }
+
+        public int Duree
+        {
+            get { return this.duree; }
+            set { this.duree = value; }
+        }
+
+        public int Id_tache_precedente
+        {
+            get { return this.id_tache_precedente; }
+            set { this.id_tache_precedente = value; }
         }
 
         public int Id_responsable
@@ -60,6 +88,12 @@ namespace Gestion.Projet.Bean
         {
             get { return this.id_jalon; }
             set { this.id_jalon = value; }
+        }
+
+        public int Avancement
+        {
+            get { return this.avancement; }
+            set { this.avancement = value; }
         }
 
         public Utilisateur Responsable

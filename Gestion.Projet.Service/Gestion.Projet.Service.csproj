@@ -41,8 +41,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FactoryServices.cs" />
     <Compile Include="Services.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServicesInterface.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Gestion.Projet.Bean\Gestion.Projet.Bean.csproj">
+      <Project>{8f6abcb4-969e-4da5-b587-9e8f88ae96cb}</Project>
+      <Name>Gestion.Projet.Bean</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Gestion.Projet.ServiceDA\Gestion.Projet.ServiceDA.csproj">
+      <Project>{12a7d81f-1cca-418c-9bea-9b5f26146362}</Project>
+      <Name>Gestion.Projet.ServiceDA</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

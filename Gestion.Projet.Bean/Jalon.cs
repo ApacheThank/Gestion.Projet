@@ -16,15 +16,14 @@ namespace Gestion.Projet.Bean
         private int id_projet;
         private int id_responsable;
         private Utilisateur responsable;
-        private Projet projet;
+        private Project projet;
         private List<Tache> list_taches;
 
-        public Jalon(int id, string libelle, DateTime date_livraison, int etat, int id_projet, int id_responsable)
+        public Jalon(int id, string libelle, DateTime date_livraison,int id_projet, int id_responsable)
         {
             this.id = id;
             this.libelle = libelle;
             this.date_livraison = date_livraison;
-            this.etat = etat;
             this.id_projet = id_projet;
             this.id_responsable = id_responsable;
         }
@@ -77,7 +76,7 @@ namespace Gestion.Projet.Bean
             set { this.responsable = value; }
         }
 
-        public Projet Projet
+        public Project Projet
         {
             get { return this.projet; }
             set { this.projet = value; }

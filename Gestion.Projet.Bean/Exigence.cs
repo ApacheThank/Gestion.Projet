@@ -12,6 +12,8 @@ namespace Gestion.Projet.Bean
         private int id;
         private string type;
         private string libelle;
+        private int id_projet;
+        private Project projet;
 
         public Exigence(int id, string type, string libelle)
         {
@@ -36,6 +38,18 @@ namespace Gestion.Projet.Bean
         {
             get { return this.libelle; }
             set { this.libelle = value; }
+        }
+
+        public int Id_projet
+        {
+            get { return this.id_projet; }
+            set { this.id_projet = value; }
+        }
+
+        public Project Projet
+        {
+            get { return this.projet; }
+            set { this.projet = value; }
         }
 
     }

@@ -7,18 +7,18 @@
 // </généré automatiquement>
 //------------------------------------------------------------------------------
 
-namespace Gestion.Projet {
+namespace Gestion.Projet.Control {
     
     
-    public partial class _Default {
+    public partial class Projet {
         
         /// <summary>
-        /// Contrôle projets.
+        /// Contrôle repeater.
         /// </summary>
         /// <remarks>
         /// Champ généré automatiquement.
         /// Pour modifier, déplacez la déclaration de champ du fichier de concepteur dans le fichier code-behind.
         /// </remarks>
-        protected global::Gestion.Projet.Control.Projet projets;
+        protected global::System.Web.UI.WebControls.Repeater repeater;
     }
 }

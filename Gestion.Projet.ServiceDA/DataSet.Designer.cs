@@ -46,11 +46,11 @@ namespace Gestion.Projet.ServiceDA {
         
         private global::System.Data.DataRelation relationFK_Tache_Utilisateur;
         
-        private global::System.Data.DataRelation relationFK_Exigence_Jalon;
-        
         private global::System.Data.DataRelation relationFK_AssocExiTache_Exigence;
         
         private global::System.Data.DataRelation relationFK_AssocExiTache_Tache;
+        
+        private global::System.Data.DataRelation relationFK_Exigence_Projet;
         
         private global::System.Data.SchemaSerializationMode _schemaSerializationMode = global::System.Data.SchemaSerializationMode.IncludeSchema;
         
@@ -335,9 +335,9 @@ namespace Gestion.Projet.ServiceDA {
             this.relationFK_Jalon_Utilisateur = this.Relations["FK_Jalon_Utilisateur"];
             this.relationFK_Tache_Jalon = this.Relations["FK_Tache_Jalon"];
             this.relationFK_Tache_Utilisateur = this.Relations["FK_Tache_Utilisateur"];
-            this.relationFK_Exigence_Jalon = this.Relations["FK_Exigence_Jalon"];
             this.relationFK_AssocExiTache_Exigence = this.Relations["FK_AssocExiTache_Exigence"];
             this.relationFK_AssocExiTache_Tache = this.Relations["FK_AssocExiTache_Tache"];
+            this.relationFK_Exigence_Projet = this.Relations["FK_Exigence_Projet"];
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -380,10 +380,6 @@ namespace Gestion.Projet.ServiceDA {
                         this.tableUtilisateur.idColumn}, new global::System.Data.DataColumn[] {
                         this.tableTache.id_responsableColumn}, false);
             this.Relations.Add(this.relationFK_Tache_Utilisateur);
-            this.relationFK_Exigence_Jalon = new global::System.Data.DataRelation("FK_Exigence_Jalon", new global::System.Data.DataColumn[] {
-                        this.tableJalon.idColumn}, new global::System.Data.DataColumn[] {
-                        this.tableExigence.id_jalonColumn}, false);
-            this.Relations.Add(this.relationFK_Exigence_Jalon);
             this.relationFK_AssocExiTache_Exigence = new global::System.Data.DataRelation("FK_AssocExiTache_Exigence", new global::System.Data.DataColumn[] {
                         this.tableExigence.idColumn}, new global::System.Data.DataColumn[] {
                         this.tableAssocExiTache.id_exigenceColumn}, false);
@@ -392,6 +388,10 @@ namespace Gestion.Projet.ServiceDA {
                         this.tableTache.idColumn}, new global::System.Data.DataColumn[] {
                         this.tableAssocExiTache.id_tacheColumn}, false);
             this.Relations.Add(this.relationFK_AssocExiTache_Tache);
+            this.relationFK_Exigence_Projet = new global::System.Data.DataRelation("FK_Exigence_Projet", new global::System.Data.DataColumn[] {
+                        this.tableProjet.idColumn}, new global::System.Data.DataColumn[] {
+                        this.tableExigence.id_projetColumn}, false);
+            this.Relations.Add(this.relationFK_Exigence_Projet);
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1435,8 +1435,6 @@ namespace Gestion.Projet.ServiceDA {
             
             private global::System.Data.DataColumn columndate_debut;
             
-            private global::System.Data.DataColumn columndate_fin;
-            
             private global::System.Data.DataColumn columnduree;
             
             private global::System.Data.DataColumn columnid_tache_precente;
@@ -1444,6 +1442,10 @@ namespace Gestion.Projet.ServiceDA {
             private global::System.Data.DataColumn columnid_responsable;
             
             private global::System.Data.DataColumn columnid_jalon;
+            
+            private global::System.Data.DataColumn columndate_reelle_debut;
+            
+            private global::System.Data.DataColumn columnavancement;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
@@ -1512,14 +1514,6 @@ namespace Gestion.Projet.ServiceDA {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public global::System.Data.DataColumn date_finColumn {
-                get {
-                    return this.columndate_fin;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public global::System.Data.DataColumn dureeColumn {
                 get {
                     return this.columnduree;
@@ -1547,6 +1541,22 @@ namespace Gestion.Projet.ServiceDA {
             public global::System.Data.DataColumn id_jalonColumn {
                 get {
                     return this.columnid_jalon;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn date_reelle_debutColumn {
+                get {
+                    return this.columndate_reelle_debut;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn avancementColumn {
+                get {
+                    return this.columnavancement;
                 }
             }
             
@@ -1587,23 +1597,24 @@ namespace Gestion.Projet.ServiceDA {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public TacheRow AddTacheRow(string libelle, string description, System.DateTime date_debut, System.DateTime date_fin, int duree, int id_tache_precente, UtilisateurRow parentUtilisateurRowByFK_Tache_Utilisateur, JalonRow parentJalonRowByFK_Tache_Jalon) {
+            public TacheRow AddTacheRow(string libelle, string description, System.DateTime date_debut, int duree, int id_tache_precente, UtilisateurRow parentUtilisateurRowByFK_Tache_Utilisateur, JalonRow parentJalonRowByFK_Tache_Jalon, System.DateTime date_reelle_debut, int avancement) {
                 TacheRow rowTacheRow = ((TacheRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         null,
                         libelle,
                         description,
                         date_debut,
-                        date_fin,
                         duree,
                         id_tache_precente,
                         null,
-                        null};
+                        null,
+                        date_reelle_debut,
+                        avancement};
                 if ((parentUtilisateurRowByFK_Tache_Utilisateur != null)) {
-                    columnValuesArray[7] = parentUtilisateurRowByFK_Tache_Utilisateur[0];
+                    columnValuesArray[6] = parentUtilisateurRowByFK_Tache_Utilisateur[0];
                 }
                 if ((parentJalonRowByFK_Tache_Jalon != null)) {
-                    columnValuesArray[8] = parentJalonRowByFK_Tache_Jalon[0];
+                    columnValuesArray[7] = parentJalonRowByFK_Tache_Jalon[0];
                 }
                 rowTacheRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowTacheRow);
@@ -1638,11 +1649,12 @@ namespace Gestion.Projet.ServiceDA {
                 this.columnlibelle = base.Columns["libelle"];
                 this.columndescription = base.Columns["description"];
                 this.columndate_debut = base.Columns["date_debut"];
-                this.columndate_fin = base.Columns["date_fin"];
                 this.columnduree = base.Columns["duree"];
                 this.columnid_tache_precente = base.Columns["id_tache_precente"];
                 this.columnid_responsable = base.Columns["id_responsable"];
                 this.columnid_jalon = base.Columns["id_jalon"];
+                this.columndate_reelle_debut = base.Columns["date_reelle_debut"];
+                this.columnavancement = base.Columns["avancement"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1656,8 +1668,6 @@ namespace Gestion.Projet.ServiceDA {
                 base.Columns.Add(this.columndescription);
                 this.columndate_debut = new global::System.Data.DataColumn("date_debut", typeof(global::System.DateTime), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columndate_debut);
-                this.columndate_fin = new global::System.Data.DataColumn("date_fin", typeof(global::System.DateTime), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columndate_fin);
                 this.columnduree = new global::System.Data.DataColumn("duree", typeof(int), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnduree);
                 this.columnid_tache_precente = new global::System.Data.DataColumn("id_tache_precente", typeof(int), null, global::System.Data.MappingType.Element);
@@ -1666,6 +1676,10 @@ namespace Gestion.Projet.ServiceDA {
                 base.Columns.Add(this.columnid_responsable);
                 this.columnid_jalon = new global::System.Data.DataColumn("id_jalon", typeof(int), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnid_jalon);
+                this.columndate_reelle_debut = new global::System.Data.DataColumn("date_reelle_debut", typeof(global::System.DateTime), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columndate_reelle_debut);
+                this.columnavancement = new global::System.Data.DataColumn("avancement", typeof(int), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnavancement);
                 this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint1", new global::System.Data.DataColumn[] {
                                 this.columnid}, true));
                 this.columnid.AutoIncrement = true;
@@ -1819,9 +1833,9 @@ namespace Gestion.Projet.ServiceDA {
             
             private global::System.Data.DataColumn columntype;
             
-            private global::System.Data.DataColumn columnid_jalon;
-            
             private global::System.Data.DataColumn columnlibelle;
+            
+            private global::System.Data.DataColumn columnid_projet;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
@@ -1874,17 +1888,17 @@ namespace Gestion.Projet.ServiceDA {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public global::System.Data.DataColumn id_jalonColumn {
+            public global::System.Data.DataColumn libelleColumn {
                 get {
-                    return this.columnid_jalon;
+                    return this.columnlibelle;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public global::System.Data.DataColumn libelleColumn {
+            public global::System.Data.DataColumn id_projetColumn {
                 get {
-                    return this.columnlibelle;
+                    return this.columnid_projet;
                 }
             }
             
@@ -1925,15 +1939,15 @@ namespace Gestion.Projet.ServiceDA {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public ExigenceRow AddExigenceRow(string type, JalonRow parentJalonRowByFK_Exigence_Jalon, string libelle) {
+            public ExigenceRow AddExigenceRow(string type, string libelle, ProjetRow parentProjetRowByFK_Exigence_Projet) {
                 ExigenceRow rowExigenceRow = ((ExigenceRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         null,
                         type,
-                        null,
-                        libelle};
-                if ((parentJalonRowByFK_Exigence_Jalon != null)) {
-                    columnValuesArray[2] = parentJalonRowByFK_Exigence_Jalon[0];
+                        libelle,
+                        null};
+                if ((parentProjetRowByFK_Exigence_Projet != null)) {
+                    columnValuesArray[3] = parentProjetRowByFK_Exigence_Projet[0];
                 }
                 rowExigenceRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowExigenceRow);
@@ -1966,8 +1980,8 @@ namespace Gestion.Projet.ServiceDA {
             internal void InitVars() {
                 this.columnid = base.Columns["id"];
                 this.columntype = base.Columns["type"];
-                this.columnid_jalon = base.Columns["id_jalon"];
                 this.columnlibelle = base.Columns["libelle"];
+                this.columnid_projet = base.Columns["id_projet"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1977,10 +1991,10 @@ namespace Gestion.Projet.ServiceDA {
                 base.Columns.Add(this.columnid);
                 this.columntype = new global::System.Data.DataColumn("type", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columntype);
-                this.columnid_jalon = new global::System.Data.DataColumn("id_jalon", typeof(int), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnid_jalon);
                 this.columnlibelle = new global::System.Data.DataColumn("libelle", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnlibelle);
+                this.columnid_projet = new global::System.Data.DataColumn("id_projet", typeof(int), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnid_projet);
                 this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint1", new global::System.Data.DataColumn[] {
                                 this.columnid}, true));
                 this.columnid.AutoIncrement = true;
@@ -1991,8 +2005,8 @@ namespace Gestion.Projet.ServiceDA {
                 this.columnid.Unique = true;
                 this.columntype.AllowDBNull = false;
                 this.columntype.MaxLength = 50;
-                this.columnid_jalon.AllowDBNull = false;
                 this.columnlibelle.MaxLength = 50;
+                this.columnid_projet.AllowDBNull = false;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -2526,6 +2540,17 @@ namespace Gestion.Projet.ServiceDA {
                     return ((JalonRow[])(base.GetChildRows(this.Table.ChildRelations["FK_Jalon_Projet"])));
                 }
             }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public ExigenceRow[] GetExigenceRows() {
+                if ((this.Table.ChildRelations["FK_Exigence_Projet"] == null)) {
+                    return new ExigenceRow[0];
+                }
+                else {
+                    return ((ExigenceRow[])(base.GetChildRows(this.Table.ChildRelations["FK_Exigence_Projet"])));
+                }
+            }
         }
         
         /// <summary>
@@ -2657,17 +2682,6 @@ namespace Gestion.Projet.ServiceDA {
                     return ((TacheRow[])(base.GetChildRows(this.Table.ChildRelations["FK_Tache_Jalon"])));
                 }
             }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public ExigenceRow[] GetExigenceRows() {
-                if ((this.Table.ChildRelations["FK_Exigence_Jalon"] == null)) {
-                    return new ExigenceRow[0];
-                }
-                else {
-                    return ((ExigenceRow[])(base.GetChildRows(this.Table.ChildRelations["FK_Exigence_Jalon"])));
-                }
-            }
         }
         
         /// <summary>
@@ -2730,22 +2744,6 @@ namespace Gestion.Projet.ServiceDA {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public System.DateTime date_fin {
-                get {
-                    try {
-                        return ((global::System.DateTime)(this[this.tableTache.date_finColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("La valeur pour la colonne \'date_fin\' dans la table \'Tache\' est DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableTache.date_finColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public int duree {
                 get {
                     return ((int)(this[this.tableTache.dureeColumn]));
@@ -2795,6 +2793,38 @@ namespace Gestion.Projet.ServiceDA {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public System.DateTime date_reelle_debut {
+                get {
+                    try {
+                        return ((global::System.DateTime)(this[this.tableTache.date_reelle_debutColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("La valeur pour la colonne \'date_reelle_debut\' dans la table \'Tache\' est DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableTache.date_reelle_debutColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public int avancement {
+                get {
+                    try {
+                        return ((int)(this[this.tableTache.avancementColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("La valeur pour la colonne \'avancement\' dans la table \'Tache\' est DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableTache.avancementColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public JalonRow JalonRow {
                 get {
                     return ((JalonRow)(this.GetParentRow(this.Table.ParentRelations["FK_Tache_Jalon"])));
@@ -2817,18 +2847,6 @@ namespace Gestion.Projet.ServiceDA {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public bool Isdate_finNull() {
-                return this.IsNull(this.tableTache.date_finColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public void Setdate_finNull() {
-                this[this.tableTache.date_finColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool Isid_tache_precenteNull() {
                 return this.IsNull(this.tableTache.id_tache_precenteColumn);
             }
@@ -2837,6 +2855,30 @@ namespace Gestion.Projet.ServiceDA {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void Setid_tache_precenteNull() {
                 this[this.tableTache.id_tache_precenteColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool Isdate_reelle_debutNull() {
+                return this.IsNull(this.tableTache.date_reelle_debutColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void Setdate_reelle_debutNull() {
+                this[this.tableTache.date_reelle_debutColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsavancementNull() {
+                return this.IsNull(this.tableTache.avancementColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetavancementNull() {
+                this[this.tableTache.avancementColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -2889,17 +2931,6 @@ namespace Gestion.Projet.ServiceDA {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public int id_jalon {
-                get {
-                    return ((int)(this[this.tableExigence.id_jalonColumn]));
-                }
-                set {
-                    this[this.tableExigence.id_jalonColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public string libelle {
                 get {
                     try {
@@ -2916,12 +2947,23 @@ namespace Gestion.Projet.ServiceDA {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public JalonRow JalonRow {
+            public int id_projet {
                 get {
-                    return ((JalonRow)(this.GetParentRow(this.Table.ParentRelations["FK_Exigence_Jalon"])));
+                    return ((int)(this[this.tableExigence.id_projetColumn]));
                 }
                 set {
-                    this.SetParentRow(value, this.Table.ParentRelations["FK_Exigence_Jalon"]);
+                    this[this.tableExigence.id_projetColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public ProjetRow ProjetRow {
+                get {
+                    return ((ProjetRow)(this.GetParentRow(this.Table.ParentRelations["FK_Exigence_Projet"])));
+                }
+                set {
+                    this.SetParentRow(value, this.Table.ParentRelations["FK_Exigence_Projet"]);
                 }
             }
             
@@ -3375,17 +3417,22 @@ namespace Gestion.Projet.ServiceDA.DataSet1TableAdapters {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
         private void InitCommandCollection() {
-            this._commandCollection = new global::System.Data.SqlClient.SqlCommand[2];
+            this._commandCollection = new global::System.Data.SqlClient.SqlCommand[3];
             this._commandCollection[0] = new global::System.Data.SqlClient.SqlCommand();
             this._commandCollection[0].Connection = this.Connection;
             this._commandCollection[0].CommandText = "SELECT        id, trigramme\r\nFROM            Utilisateur";
             this._commandCollection[0].CommandType = global::System.Data.CommandType.Text;
             this._commandCollection[1] = new global::System.Data.SqlClient.SqlCommand();
             this._commandCollection[1].Connection = this.Connection;
-            this._commandCollection[1].CommandText = "INSERT INTO [Utilisateur] ([trigramme]) VALUES (@trigramme);\r\nSELECT id, trigramm" +
-                "e FROM Utilisateur WHERE (id = SCOPE_IDENTITY())";
+            this._commandCollection[1].CommandText = "SELECT        id, trigramme\r\nFROM            Utilisateur\r\nWHERE (id = @id)";
             this._commandCollection[1].CommandType = global::System.Data.CommandType.Text;
-            this._commandCollection[1].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@trigramme", global::System.Data.SqlDbType.VarChar, 50, global::System.Data.ParameterDirection.Input, 0, 0, "trigramme", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._commandCollection[1].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@id", global::System.Data.SqlDbType.Int, 4, global::System.Data.ParameterDirection.Input, 0, 0, "id", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._commandCollection[2] = new global::System.Data.SqlClient.SqlCommand();
+            this._commandCollection[2].Connection = this.Connection;
+            this._commandCollection[2].CommandText = "INSERT INTO [Utilisateur] ([trigramme]) VALUES (@trigramme);\r\nSELECT id, trigramm" +
+                "e FROM Utilisateur WHERE (id = SCOPE_IDENTITY())";
+            this._commandCollection[2].CommandType = global::System.Data.CommandType.Text;
+            this._commandCollection[2].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@trigramme", global::System.Data.SqlDbType.VarChar, 50, global::System.Data.ParameterDirection.Input, 0, 0, "trigramme", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -3394,6 +3441,18 @@ namespace Gestion.Projet.ServiceDA.DataSet1TableAdapters {
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Select, true)]
         public virtual DataSet1.UtilisateurDataTable getUtilisateurs() {
             this.Adapter.SelectCommand = this.CommandCollection[0];
+            DataSet1.UtilisateurDataTable dataTable = new DataSet1.UtilisateurDataTable();
+            this.Adapter.Fill(dataTable);
+            return dataTable;
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+        [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
+        [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Select, false)]
+        public virtual DataSet1.UtilisateurDataTable getUtilisateurById(int id) {
+            this.Adapter.SelectCommand = this.CommandCollection[1];
+            this.Adapter.SelectCommand.Parameters[0].Value = ((int)(id));
             DataSet1.UtilisateurDataTable dataTable = new DataSet1.UtilisateurDataTable();
             this.Adapter.Fill(dataTable);
             return dataTable;
@@ -3531,7 +3590,7 @@ namespace Gestion.Projet.ServiceDA.DataSet1TableAdapters {
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Insert, false)]
         public virtual int insertUtilisateur(string trigramme) {
-            global::System.Data.SqlClient.SqlCommand command = this.CommandCollection[1];
+            global::System.Data.SqlClient.SqlCommand command = this.CommandCollection[2];
             if ((trigramme == null)) {
                 throw new global::System.ArgumentNullException("trigramme");
             }
@@ -3730,7 +3789,7 @@ SELECT id, trigramme, id_utilisateur FROM Projet WHERE (id = @id)";
             this._commandCollection[1].CommandText = "DELETE FROM [Projet] WHERE (id = @id)\r\nSELECT COUNT(*) FROM Projet WHERE (id=@id)" +
                 "";
             this._commandCollection[1].CommandType = global::System.Data.CommandType.Text;
-            this._commandCollection[1].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@id", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, null, global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._commandCollection[1].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@id", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "id", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._commandCollection[2] = new global::System.Data.SqlClient.SqlCommand();
             this._commandCollection[2].Connection = this.Connection;
             this._commandCollection[2].CommandText = "SELECT        id, trigramme, id_utilisateur\r\nFROM            Projet\r\nWhere (id = " +
@@ -3751,12 +3810,9 @@ SELECT id, trigramme, id_utilisateur FROM Projet WHERE (id = @id)";
                 "WHERE (id=@id)\r\nSELECT id, trigramme, id_utilisateur FROM Projet WHERE (id = @id" +
                 ")";
             this._commandCollection[4].CommandType = global::System.Data.CommandType.Text;
+            this._commandCollection[4].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@id", global::System.Data.SqlDbType.Int, 4, global::System.Data.ParameterDirection.Input, 0, 0, "id", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._commandCollection[4].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@trigramme", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "trigramme", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._commandCollection[4].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@id_utilisateur", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "id_utilisateur", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._commandCollection[4].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_id", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "id", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._commandCollection[4].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_trigramme", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "trigramme", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._commandCollection[4].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_id_utilisateur", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "id_utilisateur", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._commandCollection[4].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@id", global::System.Data.SqlDbType.Int, 4, global::System.Data.ParameterDirection.Input, 0, 0, "id", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -3917,14 +3973,9 @@ SELECT id, trigramme, id_utilisateur FROM Projet WHERE (id = @id)";
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Delete, false)]
-        public virtual int deleteProjet(string id) {
+        public virtual int deleteProjet(int id) {
             global::System.Data.SqlClient.SqlCommand command = this.CommandCollection[1];
-            if ((id == null)) {
-                throw new global::System.ArgumentNullException("id");
-            }
-            else {
-                command.Parameters[0].Value = ((string)(id));
-            }
+            command.Parameters[0].Value = ((int)(id));
             global::System.Data.ConnectionState previousConnectionState = command.Connection.State;
             if (((command.Connection.State & global::System.Data.ConnectionState.Open) 
                         != global::System.Data.ConnectionState.Open)) {
@@ -3976,24 +4027,16 @@ SELECT id, trigramme, id_utilisateur FROM Projet WHERE (id = @id)";
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Update, false)]
-        public virtual int updateProjet(string trigramme, int id_utilisateur, int Original_id, string Original_trigramme, int Original_id_utilisateur, int id) {
+        public virtual int updateProjet(int id, string trigramme, int id_utilisateur) {
             global::System.Data.SqlClient.SqlCommand command = this.CommandCollection[4];
+            command.Parameters[0].Value = ((int)(id));
             if ((trigramme == null)) {
                 throw new global::System.ArgumentNullException("trigramme");
             }
             else {
-                command.Parameters[0].Value = ((string)(trigramme));
+                command.Parameters[1].Value = ((string)(trigramme));
             }
-            command.Parameters[1].Value = ((int)(id_utilisateur));
-            command.Parameters[2].Value = ((int)(Original_id));
-            if ((Original_trigramme == null)) {
-                throw new global::System.ArgumentNullException("Original_trigramme");
-            }
-            else {
-                command.Parameters[3].Value = ((string)(Original_trigramme));
-            }
-            command.Parameters[4].Value = ((int)(Original_id_utilisateur));
-            command.Parameters[5].Value = ((int)(id));
+            command.Parameters[2].Value = ((int)(id_utilisateur));
             global::System.Data.ConnectionState previousConnectionState = command.Connection.State;
             if (((command.Connection.State & global::System.Data.ConnectionState.Open) 
                         != global::System.Data.ConnectionState.Open)) {
@@ -4202,7 +4245,7 @@ SELECT id, libelle, date_livraison, date_reelle, id_projet, id_responsable FROM 
             this._commandCollection[1].CommandText = "DELETE FROM [Jalon] WHERE (id = @id)\r\nSELECT COUNT(*) FROM [Jalon] WHERE (id = @i" +
                 "d)";
             this._commandCollection[1].CommandType = global::System.Data.CommandType.Text;
-            this._commandCollection[1].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@id", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, null, global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._commandCollection[1].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@id", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "id", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._commandCollection[2] = new global::System.Data.SqlClient.SqlCommand();
             this._commandCollection[2].Connection = this.Connection;
             this._commandCollection[2].CommandText = "SELECT        id, libelle, date_livraison, date_reelle, id_projet, id_responsable" +
@@ -4227,8 +4270,8 @@ SELECT id, libelle, date_livraison, date_reelle, id_projet, id_responsable FROM 
 SELECT id, libelle, date_livraison, date_reelle, id_projet, id_responsable FROM Jalon WHERE (id = SCOPE_IDENTITY())";
             this._commandCollection[5].CommandType = global::System.Data.CommandType.Text;
             this._commandCollection[5].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@libelle", global::System.Data.SqlDbType.VarChar, 50, global::System.Data.ParameterDirection.Input, 0, 0, "libelle", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._commandCollection[5].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@date_livraison", global::System.Data.SqlDbType.Date, 3, global::System.Data.ParameterDirection.Input, 0, 0, "date_livraison", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._commandCollection[5].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@date_reelle", global::System.Data.SqlDbType.Date, 3, global::System.Data.ParameterDirection.Input, 0, 0, "date_reelle", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._commandCollection[5].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@date_livraison", global::System.Data.SqlDbType.DateTime, 3, global::System.Data.ParameterDirection.Input, 0, 0, "date_livraison", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._commandCollection[5].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@date_reelle", global::System.Data.SqlDbType.DateTime, 3, global::System.Data.ParameterDirection.Input, 0, 0, "date_reelle", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._commandCollection[5].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@id_projet", global::System.Data.SqlDbType.Int, 4, global::System.Data.ParameterDirection.Input, 0, 0, "id_projet", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._commandCollection[5].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@id_responsable", global::System.Data.SqlDbType.Int, 4, global::System.Data.ParameterDirection.Input, 0, 0, "id_responsable", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._commandCollection[6] = new global::System.Data.SqlClient.SqlCommand();
@@ -4462,14 +4505,9 @@ SELECT id, libelle, date_livraison, date_reelle, id_projet, id_responsable FROM 
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Delete, false)]
-        public virtual int deleteJalon(string id) {
+        public virtual int deleteJalon(int id) {
             global::System.Data.SqlClient.SqlCommand command = this.CommandCollection[1];
-            if ((id == null)) {
-                throw new global::System.ArgumentNullException("id");
-            }
-            else {
-                command.Parameters[0].Value = ((string)(id));
-            }
+            command.Parameters[0].Value = ((int)(id));
             global::System.Data.ConnectionState previousConnectionState = command.Connection.State;
             if (((command.Connection.State & global::System.Data.ConnectionState.Open) 
                         != global::System.Data.ConnectionState.Open)) {
@@ -4491,7 +4529,7 @@ SELECT id, libelle, date_livraison, date_reelle, id_projet, id_responsable FROM 
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Insert, false)]
-        public virtual int insertJalon(string libelle, string date_livraison, string date_reelle, int id_projet, int id_responsable) {
+        public virtual int insertJalon(string libelle, System.DateTime date_livraison, global::System.Nullable<global::System.DateTime> date_reelle, int id_projet, int id_responsable) {
             global::System.Data.SqlClient.SqlCommand command = this.CommandCollection[5];
             if ((libelle == null)) {
                 throw new global::System.ArgumentNullException("libelle");
@@ -4499,17 +4537,12 @@ SELECT id, libelle, date_livraison, date_reelle, id_projet, id_responsable FROM 
             else {
                 command.Parameters[0].Value = ((string)(libelle));
             }
-            if ((date_livraison == null)) {
-                throw new global::System.ArgumentNullException("date_livraison");
+            command.Parameters[1].Value = ((System.DateTime)(date_livraison));
+            if ((date_reelle.HasValue == true)) {
+                command.Parameters[2].Value = ((System.DateTime)(date_reelle.Value));
             }
             else {
-                command.Parameters[1].Value = ((string)(date_livraison));
-            }
-            if ((date_reelle == null)) {
                 command.Parameters[2].Value = global::System.DBNull.Value;
-            }
-            else {
-                command.Parameters[2].Value = ((string)(date_reelle));
             }
             command.Parameters[3].Value = ((int)(id_projet));
             command.Parameters[4].Value = ((int)(id_responsable));
@@ -4695,64 +4728,71 @@ SELECT id, libelle, date_livraison, date_reelle, id_projet, id_responsable FROM 
             tableMapping.ColumnMappings.Add("libelle", "libelle");
             tableMapping.ColumnMappings.Add("description", "description");
             tableMapping.ColumnMappings.Add("date_debut", "date_debut");
-            tableMapping.ColumnMappings.Add("date_fin", "date_fin");
             tableMapping.ColumnMappings.Add("duree", "duree");
             tableMapping.ColumnMappings.Add("id_tache_precente", "id_tache_precente");
             tableMapping.ColumnMappings.Add("id_responsable", "id_responsable");
             tableMapping.ColumnMappings.Add("id_jalon", "id_jalon");
+            tableMapping.ColumnMappings.Add("date_reelle_debut", "date_reelle_debut");
+            tableMapping.ColumnMappings.Add("avancement", "avancement");
             this._adapter.TableMappings.Add(tableMapping);
             this._adapter.DeleteCommand = new global::System.Data.SqlClient.SqlCommand();
             this._adapter.DeleteCommand.Connection = this.Connection;
-            this._adapter.DeleteCommand.CommandText = @"DELETE FROM [Tache] WHERE (([id] = @Original_id) AND ([libelle] = @Original_libelle) AND ([description] = @Original_description) AND ([date_debut] = @Original_date_debut) AND ((@IsNull_date_fin = 1 AND [date_fin] IS NULL) OR ([date_fin] = @Original_date_fin)) AND ([duree] = @Original_duree) AND ((@IsNull_id_tache_precente = 1 AND [id_tache_precente] IS NULL) OR ([id_tache_precente] = @Original_id_tache_precente)) AND ([id_responsable] = @Original_id_responsable) AND ([id_jalon] = @Original_id_jalon))";
+            this._adapter.DeleteCommand.CommandText = @"DELETE FROM [Tache] WHERE (([id] = @Original_id) AND ([libelle] = @Original_libelle) AND ([description] = @Original_description) AND ([date_debut] = @Original_date_debut) AND ((@IsNull_date_reelle_debut = 1 AND [date_reelle_debut] IS NULL) OR ([date_reelle_debut] = @Original_date_reelle_debut)) AND ([duree] = @Original_duree) AND ((@IsNull_id_tache_precente = 1 AND [id_tache_precente] IS NULL) OR ([id_tache_precente] = @Original_id_tache_precente)) AND ([id_responsable] = @Original_id_responsable) AND ([id_jalon] = @Original_id_jalon) AND ((@IsNull_avancement = 1 AND [avancement] IS NULL) OR ([avancement] = @Original_avancement)))";
             this._adapter.DeleteCommand.CommandType = global::System.Data.CommandType.Text;
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_id", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "id", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_libelle", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "libelle", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_description", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "description", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_date_debut", global::System.Data.SqlDbType.Date, 0, global::System.Data.ParameterDirection.Input, 0, 0, "date_debut", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_date_fin", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "date_fin", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
-            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_date_fin", global::System.Data.SqlDbType.Date, 0, global::System.Data.ParameterDirection.Input, 0, 0, "date_fin", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_date_reelle_debut", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "date_reelle_debut", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
+            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_date_reelle_debut", global::System.Data.SqlDbType.Date, 0, global::System.Data.ParameterDirection.Input, 0, 0, "date_reelle_debut", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_duree", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "duree", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_id_tache_precente", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "id_tache_precente", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_id_tache_precente", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "id_tache_precente", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_id_responsable", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "id_responsable", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_id_jalon", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "id_jalon", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_avancement", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "avancement", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
+            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_avancement", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "avancement", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.InsertCommand = new global::System.Data.SqlClient.SqlCommand();
             this._adapter.InsertCommand.Connection = this.Connection;
-            this._adapter.InsertCommand.CommandText = @"INSERT INTO [Tache] ([libelle], [description], [date_debut], [date_fin], [duree], [id_tache_precente], [id_responsable], [id_jalon]) VALUES (@libelle, @description, @date_debut, @date_fin, @duree, @id_tache_precente, @id_responsable, @id_jalon);
-SELECT id, libelle, description, date_debut, date_fin, duree, id_tache_precente, id_responsable, id_jalon FROM Tache WHERE (id = SCOPE_IDENTITY())";
+            this._adapter.InsertCommand.CommandText = @"INSERT INTO [Tache] ([libelle], [description], [date_debut], [date_reelle_debut], [duree], [id_tache_precente], [id_responsable], [id_jalon], [avancement]) VALUES (@libelle, @description, @date_debut, @date_reelle_debut, @duree, @id_tache_precente, @id_responsable, @id_jalon, @avancement);
+SELECT id, libelle, description, date_debut, date_reelle_debut, duree, id_tache_precente, id_responsable, id_jalon, avancement FROM Tache WHERE (id = SCOPE_IDENTITY())";
             this._adapter.InsertCommand.CommandType = global::System.Data.CommandType.Text;
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@libelle", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "libelle", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@description", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "description", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@date_debut", global::System.Data.SqlDbType.Date, 0, global::System.Data.ParameterDirection.Input, 0, 0, "date_debut", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@date_fin", global::System.Data.SqlDbType.Date, 0, global::System.Data.ParameterDirection.Input, 0, 0, "date_fin", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@date_reelle_debut", global::System.Data.SqlDbType.Date, 0, global::System.Data.ParameterDirection.Input, 0, 0, "date_reelle_debut", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@duree", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "duree", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@id_tache_precente", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "id_tache_precente", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@id_responsable", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "id_responsable", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@id_jalon", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "id_jalon", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@avancement", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "avancement", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand = new global::System.Data.SqlClient.SqlCommand();
             this._adapter.UpdateCommand.Connection = this.Connection;
-            this._adapter.UpdateCommand.CommandText = @"UPDATE [Tache] SET [libelle] = @libelle, [description] = @description, [date_debut] = @date_debut, [date_fin] = @date_fin, [duree] = @duree, [id_tache_precente] = @id_tache_precente, [id_responsable] = @id_responsable, [id_jalon] = @id_jalon WHERE (([id] = @Original_id) AND ([libelle] = @Original_libelle) AND ([description] = @Original_description) AND ([date_debut] = @Original_date_debut) AND ((@IsNull_date_fin = 1 AND [date_fin] IS NULL) OR ([date_fin] = @Original_date_fin)) AND ([duree] = @Original_duree) AND ((@IsNull_id_tache_precente = 1 AND [id_tache_precente] IS NULL) OR ([id_tache_precente] = @Original_id_tache_precente)) AND ([id_responsable] = @Original_id_responsable) AND ([id_jalon] = @Original_id_jalon));
-SELECT id, libelle, description, date_debut, date_fin, duree, id_tache_precente, id_responsable, id_jalon FROM Tache WHERE (id = @id)";
+            this._adapter.UpdateCommand.CommandText = @"UPDATE [Tache] SET [libelle] = @libelle, [description] = @description, [date_debut] = @date_debut, [date_reelle_debut] = @date_reelle_debut, [duree] = @duree, [id_tache_precente] = @id_tache_precente, [id_responsable] = @id_responsable, [id_jalon] = @id_jalon, [avancement] = @avancement WHERE (([id] = @Original_id) AND ([libelle] = @Original_libelle) AND ([description] = @Original_description) AND ([date_debut] = @Original_date_debut) AND ((@IsNull_date_reelle_debut = 1 AND [date_reelle_debut] IS NULL) OR ([date_reelle_debut] = @Original_date_reelle_debut)) AND ([duree] = @Original_duree) AND ((@IsNull_id_tache_precente = 1 AND [id_tache_precente] IS NULL) OR ([id_tache_precente] = @Original_id_tache_precente)) AND ([id_responsable] = @Original_id_responsable) AND ([id_jalon] = @Original_id_jalon) AND ((@IsNull_avancement = 1 AND [avancement] IS NULL) OR ([avancement] = @Original_avancement)));
+SELECT id, libelle, description, date_debut, date_reelle_debut, duree, id_tache_precente, id_responsable, id_jalon, avancement FROM Tache WHERE (id = @id)";
             this._adapter.UpdateCommand.CommandType = global::System.Data.CommandType.Text;
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@libelle", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "libelle", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@description", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "description", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@date_debut", global::System.Data.SqlDbType.Date, 0, global::System.Data.ParameterDirection.Input, 0, 0, "date_debut", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@date_fin", global::System.Data.SqlDbType.Date, 0, global::System.Data.ParameterDirection.Input, 0, 0, "date_fin", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@date_reelle_debut", global::System.Data.SqlDbType.Date, 0, global::System.Data.ParameterDirection.Input, 0, 0, "date_reelle_debut", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@duree", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "duree", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@id_tache_precente", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "id_tache_precente", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@id_responsable", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "id_responsable", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@id_jalon", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "id_jalon", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@avancement", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "avancement", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_id", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "id", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_libelle", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "libelle", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_description", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "description", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_date_debut", global::System.Data.SqlDbType.Date, 0, global::System.Data.ParameterDirection.Input, 0, 0, "date_debut", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_date_fin", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "date_fin", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_date_fin", global::System.Data.SqlDbType.Date, 0, global::System.Data.ParameterDirection.Input, 0, 0, "date_fin", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_date_reelle_debut", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "date_reelle_debut", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_date_reelle_debut", global::System.Data.SqlDbType.Date, 0, global::System.Data.ParameterDirection.Input, 0, 0, "date_reelle_debut", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_duree", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "duree", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_id_tache_precente", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "id_tache_precente", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_id_tache_precente", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "id_tache_precente", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_id_responsable", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "id_responsable", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_id_jalon", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "id_jalon", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_avancement", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "avancement", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_avancement", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "avancement", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@id", global::System.Data.SqlDbType.Int, 4, global::System.Data.ParameterDirection.Input, 0, 0, "id", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
         }
         
@@ -4769,57 +4809,57 @@ SELECT id, libelle, description, date_debut, date_fin, duree, id_tache_precente,
             this._commandCollection = new global::System.Data.SqlClient.SqlCommand[6];
             this._commandCollection[0] = new global::System.Data.SqlClient.SqlCommand();
             this._commandCollection[0].Connection = this.Connection;
-            this._commandCollection[0].CommandText = "SELECT        id, libelle, description, date_debut, date_fin, duree, id_tache_pre" +
-                "cente, id_responsable, id_jalon\r\nFROM            Tache\r\nWHERE        (id_jalon =" +
-                " @id_jalon)";
+            this._commandCollection[0].CommandText = "SELECT        id, libelle, description, date_debut, date_reelle_debut, duree, id_" +
+                "tache_precente, id_responsable, id_jalon, avancement\r\nFROM            Tache\r\nWHE" +
+                "RE        (id_jalon = @id_jalon)";
             this._commandCollection[0].CommandType = global::System.Data.CommandType.Text;
             this._commandCollection[0].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@id_jalon", global::System.Data.SqlDbType.Int, 4, global::System.Data.ParameterDirection.Input, 0, 0, "id_jalon", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._commandCollection[1] = new global::System.Data.SqlClient.SqlCommand();
             this._commandCollection[1].Connection = this.Connection;
             this._commandCollection[1].CommandText = "DELETE FROM [Tache] WHERE (id = @id) \r\nSELECT COUNT(*) FROM Tache WHERE (id=@id)";
             this._commandCollection[1].CommandType = global::System.Data.CommandType.Text;
-            this._commandCollection[1].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@id", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, null, global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._commandCollection[1].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@id", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "id", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._commandCollection[2] = new global::System.Data.SqlClient.SqlCommand();
             this._commandCollection[2].Connection = this.Connection;
-            this._commandCollection[2].CommandText = "SELECT        id, libelle, description, date_debut, date_fin, duree, id_tache_pre" +
-                "cente, id_responsable, id_jalon\r\nFROM            Tache\r\nWHERE        (id= @id)";
+            this._commandCollection[2].CommandText = "SELECT        id, libelle, description, date_debut, date_reelle_debut, duree, id_" +
+                "tache_precente, id_responsable, id_jalon, avancement\r\nFROM            Tache\r\nWHE" +
+                "RE        (id = @id)";
             this._commandCollection[2].CommandType = global::System.Data.CommandType.Text;
             this._commandCollection[2].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@id", global::System.Data.SqlDbType.Int, 4, global::System.Data.ParameterDirection.Input, 0, 0, "id", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._commandCollection[3] = new global::System.Data.SqlClient.SqlCommand();
             this._commandCollection[3].Connection = this.Connection;
-            this._commandCollection[3].CommandText = @"SELECT        t.id, t.libelle, t.description, t.date_debut, t.date_fin, t.duree, t.id_tache_precente, t.id_responsable, t.id_jalon
-FROM            Tache t INNER JOIN AssocExiTache a ON t.id = a.id_tache
-                                     INNER JOIN Exigence e ON a.id_exigence = e.id
-WHERE        (e.id = @id_exigence)";
+            this._commandCollection[3].CommandText = @"SELECT t.id,t.libelle,t.description,t.date_debut,t.date_reelle_debut, t.duree,t.id_tache_precente,t.id_responsable,t.id_jalon,t.avancement FROM Tache AS t INNER JOIN AssocExiTache AS a ON t.id = a.id_tache INNER JOIN Exigence AS e ON a.id_exigence = e.id WHERE (e.id = @id_exigence)";
             this._commandCollection[3].CommandType = global::System.Data.CommandType.Text;
             this._commandCollection[3].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@id_exigence", global::System.Data.SqlDbType.Int, 4, global::System.Data.ParameterDirection.Input, 0, 0, "id", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._commandCollection[4] = new global::System.Data.SqlClient.SqlCommand();
             this._commandCollection[4].Connection = this.Connection;
-            this._commandCollection[4].CommandText = @"INSERT INTO [Tache] ([libelle], [description], [date_debut], [date_fin], [duree], [id_tache_precente], [id_responsable], [id_jalon]) VALUES (@libelle, @description, @date_debut, @date_fin, @duree, @id_tache_precente, @id_responsable, @id_jalon);
-SELECT id, libelle, description, date_debut, date_fin, duree, id_tache_precente, id_responsable, id_jalon FROM Tache WHERE (id = SCOPE_IDENTITY())";
+            this._commandCollection[4].CommandText = @"INSERT INTO [Tache] ([libelle], [description], [date_debut], [date_reelle_debut], [duree], [id_tache_precente], [id_responsable], [id_jalon],[avancement]) VALUES (@libelle, @description, @date_debut, @date_reelle_debut, @duree, @id_tache_precente, @id_responsable, @id_jalon,@avancement);
+SELECT id, libelle, description, date_debut, date_reelle_debut, duree, id_tache_precente, id_responsable, id_jalon,avancement FROM Tache WHERE (id = SCOPE_IDENTITY())";
             this._commandCollection[4].CommandType = global::System.Data.CommandType.Text;
             this._commandCollection[4].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@libelle", global::System.Data.SqlDbType.VarChar, 50, global::System.Data.ParameterDirection.Input, 0, 0, "libelle", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._commandCollection[4].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@description", global::System.Data.SqlDbType.VarChar, 255, global::System.Data.ParameterDirection.Input, 0, 0, "description", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._commandCollection[4].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@date_debut", global::System.Data.SqlDbType.Date, 3, global::System.Data.ParameterDirection.Input, 0, 0, "date_debut", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._commandCollection[4].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@date_fin", global::System.Data.SqlDbType.Date, 3, global::System.Data.ParameterDirection.Input, 0, 0, "date_fin", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._commandCollection[4].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@date_debut", global::System.Data.SqlDbType.DateTime, 3, global::System.Data.ParameterDirection.Input, 0, 0, "date_debut", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._commandCollection[4].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@date_reelle_debut", global::System.Data.SqlDbType.DateTime, 3, global::System.Data.ParameterDirection.Input, 0, 0, "date_reelle_debut", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._commandCollection[4].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@duree", global::System.Data.SqlDbType.Int, 4, global::System.Data.ParameterDirection.Input, 0, 0, "duree", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._commandCollection[4].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@id_tache_precente", global::System.Data.SqlDbType.Int, 4, global::System.Data.ParameterDirection.Input, 0, 0, "id_tache_precente", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._commandCollection[4].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@id_responsable", global::System.Data.SqlDbType.Int, 4, global::System.Data.ParameterDirection.Input, 0, 0, "id_responsable", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._commandCollection[4].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@id_jalon", global::System.Data.SqlDbType.Int, 4, global::System.Data.ParameterDirection.Input, 0, 0, "id_jalon", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._commandCollection[4].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@avancement", global::System.Data.SqlDbType.Int, 4, global::System.Data.ParameterDirection.Input, 0, 0, "avancement", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._commandCollection[5] = new global::System.Data.SqlClient.SqlCommand();
             this._commandCollection[5].Connection = this.Connection;
-            this._commandCollection[5].CommandText = @"UPDATE [Tache] SET [libelle] = @libelle, [description] = @description, [date_debut] = @date_debut, [date_fin] = @date_fin, [duree] = @duree, [id_tache_precente] = @id_tache_precente, [id_responsable] = @id_responsable, [id_jalon] = @id_jalon WHERE (id=@id)
-SELECT id, libelle, description, date_debut, date_fin, duree, id_tache_precente, id_responsable, id_jalon FROM Tache WHERE (id = @id)";
+            this._commandCollection[5].CommandText = @"UPDATE [Tache] SET [libelle] = @libelle, [description] = @description, [date_debut] = @date_debut, [date_reelle_debut] = @date_reelle_debut, [duree] = @duree, [id_tache_precente] = @id_tache_precente, [id_responsable] = @id_responsable, [id_jalon] = @id_jalon, [avancement] = @avancement WHERE (id=@id)
+SELECT id, libelle, description, date_debut,date_reelle_debut,duree, id_tache_precente, id_responsable, id_jalon,avancement FROM Tache WHERE (id = @id)";
             this._commandCollection[5].CommandType = global::System.Data.CommandType.Text;
             this._commandCollection[5].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@id", global::System.Data.SqlDbType.Int, 4, global::System.Data.ParameterDirection.Input, 0, 0, "id", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._commandCollection[5].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@libelle", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "libelle", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._commandCollection[5].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@description", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "description", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._commandCollection[5].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@date_debut", global::System.Data.SqlDbType.Date, 0, global::System.Data.ParameterDirection.Input, 0, 0, "date_debut", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._commandCollection[5].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@date_fin", global::System.Data.SqlDbType.Date, 0, global::System.Data.ParameterDirection.Input, 0, 0, "date_fin", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._commandCollection[5].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@date_reelle_debut", global::System.Data.SqlDbType.Date, 0, global::System.Data.ParameterDirection.Input, 0, 0, "date_fin", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._commandCollection[5].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@duree", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "duree", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._commandCollection[5].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@id_tache_precente", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "id_tache_precente", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._commandCollection[5].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@id_responsable", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "id_responsable", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._commandCollection[5].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@id_jalon", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "id_jalon", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._commandCollection[5].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@avancement", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "avancement", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -4891,7 +4931,7 @@ SELECT id, libelle, description, date_debut, date_fin, duree, id_tache_precente,
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Delete, true)]
-        public virtual int Delete(int Original_id, string Original_libelle, string Original_description, System.DateTime Original_date_debut, global::System.Nullable<global::System.DateTime> Original_date_fin, int Original_duree, global::System.Nullable<int> Original_id_tache_precente, int Original_id_responsable, int Original_id_jalon) {
+        public virtual int Delete(int Original_id, string Original_libelle, string Original_description, System.DateTime Original_date_debut, global::System.Nullable<global::System.DateTime> Original_date_reelle_debut, int Original_duree, global::System.Nullable<int> Original_id_tache_precente, int Original_id_responsable, int Original_id_jalon, global::System.Nullable<int> Original_avancement) {
             this.Adapter.DeleteCommand.Parameters[0].Value = ((int)(Original_id));
             if ((Original_libelle == null)) {
                 throw new global::System.ArgumentNullException("Original_libelle");
@@ -4906,9 +4946,9 @@ SELECT id, libelle, description, date_debut, date_fin, duree, id_tache_precente,
                 this.Adapter.DeleteCommand.Parameters[2].Value = ((string)(Original_description));
             }
             this.Adapter.DeleteCommand.Parameters[3].Value = ((System.DateTime)(Original_date_debut));
-            if ((Original_date_fin.HasValue == true)) {
+            if ((Original_date_reelle_debut.HasValue == true)) {
                 this.Adapter.DeleteCommand.Parameters[4].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[5].Value = ((System.DateTime)(Original_date_fin.Value));
+                this.Adapter.DeleteCommand.Parameters[5].Value = ((System.DateTime)(Original_date_reelle_debut.Value));
             }
             else {
                 this.Adapter.DeleteCommand.Parameters[4].Value = ((object)(1));
@@ -4925,6 +4965,14 @@ SELECT id, libelle, description, date_debut, date_fin, duree, id_tache_precente,
             }
             this.Adapter.DeleteCommand.Parameters[9].Value = ((int)(Original_id_responsable));
             this.Adapter.DeleteCommand.Parameters[10].Value = ((int)(Original_id_jalon));
+            if ((Original_avancement.HasValue == true)) {
+                this.Adapter.DeleteCommand.Parameters[11].Value = ((object)(0));
+                this.Adapter.DeleteCommand.Parameters[12].Value = ((int)(Original_avancement.Value));
+            }
+            else {
+                this.Adapter.DeleteCommand.Parameters[11].Value = ((object)(1));
+                this.Adapter.DeleteCommand.Parameters[12].Value = global::System.DBNull.Value;
+            }
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.DeleteCommand.Connection.State;
             if (((this.Adapter.DeleteCommand.Connection.State & global::System.Data.ConnectionState.Open) 
                         != global::System.Data.ConnectionState.Open)) {
@@ -4945,7 +4993,7 @@ SELECT id, libelle, description, date_debut, date_fin, duree, id_tache_precente,
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Insert, true)]
-        public virtual int Insert(string libelle, string description, System.DateTime date_debut, global::System.Nullable<global::System.DateTime> date_fin, int duree, global::System.Nullable<int> id_tache_precente, int id_responsable, int id_jalon) {
+        public virtual int Insert(string libelle, string description, System.DateTime date_debut, global::System.Nullable<global::System.DateTime> date_reelle_debut, int duree, global::System.Nullable<int> id_tache_precente, int id_responsable, int id_jalon, global::System.Nullable<int> avancement) {
             if ((libelle == null)) {
                 throw new global::System.ArgumentNullException("libelle");
             }
@@ -4959,8 +5007,8 @@ SELECT id, libelle, description, date_debut, date_fin, duree, id_tache_precente,
                 this.Adapter.InsertCommand.Parameters[1].Value = ((string)(description));
             }
             this.Adapter.InsertCommand.Parameters[2].Value = ((System.DateTime)(date_debut));
-            if ((date_fin.HasValue == true)) {
-                this.Adapter.InsertCommand.Parameters[3].Value = ((System.DateTime)(date_fin.Value));
+            if ((date_reelle_debut.HasValue == true)) {
+                this.Adapter.InsertCommand.Parameters[3].Value = ((System.DateTime)(date_reelle_debut.Value));
             }
             else {
                 this.Adapter.InsertCommand.Parameters[3].Value = global::System.DBNull.Value;
@@ -4974,6 +5022,12 @@ SELECT id, libelle, description, date_debut, date_fin, duree, id_tache_precente,
             }
             this.Adapter.InsertCommand.Parameters[6].Value = ((int)(id_responsable));
             this.Adapter.InsertCommand.Parameters[7].Value = ((int)(id_jalon));
+            if ((avancement.HasValue == true)) {
+                this.Adapter.InsertCommand.Parameters[8].Value = ((int)(avancement.Value));
+            }
+            else {
+                this.Adapter.InsertCommand.Parameters[8].Value = global::System.DBNull.Value;
+            }
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.InsertCommand.Connection.State;
             if (((this.Adapter.InsertCommand.Connection.State & global::System.Data.ConnectionState.Open) 
                         != global::System.Data.ConnectionState.Open)) {
@@ -4998,20 +5052,22 @@ SELECT id, libelle, description, date_debut, date_fin, duree, id_tache_precente,
                     string libelle, 
                     string description, 
                     System.DateTime date_debut, 
-                    global::System.Nullable<global::System.DateTime> date_fin, 
+                    global::System.Nullable<global::System.DateTime> date_reelle_debut, 
                     int duree, 
                     global::System.Nullable<int> id_tache_precente, 
                     int id_responsable, 
                     int id_jalon, 
+                    global::System.Nullable<int> avancement, 
                     int Original_id, 
                     string Original_libelle, 
                     string Original_description, 
                     System.DateTime Original_date_debut, 
-                    global::System.Nullable<global::System.DateTime> Original_date_fin, 
+                    global::System.Nullable<global::System.DateTime> Original_date_reelle_debut, 
                     int Original_duree, 
                     global::System.Nullable<int> Original_id_tache_precente, 
                     int Original_id_responsable, 
                     int Original_id_jalon, 
+                    global::System.Nullable<int> Original_avancement, 
                     int id) {
             if ((libelle == null)) {
                 throw new global::System.ArgumentNullException("libelle");
@@ -5026,8 +5082,8 @@ SELECT id, libelle, description, date_debut, date_fin, duree, id_tache_precente,
                 this.Adapter.UpdateCommand.Parameters[1].Value = ((string)(description));
             }
             this.Adapter.UpdateCommand.Parameters[2].Value = ((System.DateTime)(date_debut));
-            if ((date_fin.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[3].Value = ((System.DateTime)(date_fin.Value));
+            if ((date_reelle_debut.HasValue == true)) {
+                this.Adapter.UpdateCommand.Parameters[3].Value = ((System.DateTime)(date_reelle_debut.Value));
             }
             else {
                 this.Adapter.UpdateCommand.Parameters[3].Value = global::System.DBNull.Value;
@@ -5041,40 +5097,54 @@ SELECT id, libelle, description, date_debut, date_fin, duree, id_tache_precente,
             }
             this.Adapter.UpdateCommand.Parameters[6].Value = ((int)(id_responsable));
             this.Adapter.UpdateCommand.Parameters[7].Value = ((int)(id_jalon));
-            this.Adapter.UpdateCommand.Parameters[8].Value = ((int)(Original_id));
+            if ((avancement.HasValue == true)) {
+                this.Adapter.UpdateCommand.Parameters[8].Value = ((int)(avancement.Value));
+            }
+            else {
+                this.Adapter.UpdateCommand.Parameters[8].Value = global::System.DBNull.Value;
+            }
+            this.Adapter.UpdateCommand.Parameters[9].Value = ((int)(Original_id));
             if ((Original_libelle == null)) {
                 throw new global::System.ArgumentNullException("Original_libelle");
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[9].Value = ((string)(Original_libelle));
+                this.Adapter.UpdateCommand.Parameters[10].Value = ((string)(Original_libelle));
             }
             if ((Original_description == null)) {
                 throw new global::System.ArgumentNullException("Original_description");
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[10].Value = ((string)(Original_description));
+                this.Adapter.UpdateCommand.Parameters[11].Value = ((string)(Original_description));
             }
-            this.Adapter.UpdateCommand.Parameters[11].Value = ((System.DateTime)(Original_date_debut));
-            if ((Original_date_fin.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[12].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[13].Value = ((System.DateTime)(Original_date_fin.Value));
+            this.Adapter.UpdateCommand.Parameters[12].Value = ((System.DateTime)(Original_date_debut));
+            if ((Original_date_reelle_debut.HasValue == true)) {
+                this.Adapter.UpdateCommand.Parameters[13].Value = ((object)(0));
+                this.Adapter.UpdateCommand.Parameters[14].Value = ((System.DateTime)(Original_date_reelle_debut.Value));
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[12].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[13].Value = global::System.DBNull.Value;
+                this.Adapter.UpdateCommand.Parameters[13].Value = ((object)(1));
+                this.Adapter.UpdateCommand.Parameters[14].Value = global::System.DBNull.Value;
             }
-            this.Adapter.UpdateCommand.Parameters[14].Value = ((int)(Original_duree));
+            this.Adapter.UpdateCommand.Parameters[15].Value = ((int)(Original_duree));
             if ((Original_id_tache_precente.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[15].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[16].Value = ((int)(Original_id_tache_precente.Value));
+                this.Adapter.UpdateCommand.Parameters[16].Value = ((object)(0));
+                this.Adapter.UpdateCommand.Parameters[17].Value = ((int)(Original_id_tache_precente.Value));
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[15].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[16].Value = global::System.DBNull.Value;
+                this.Adapter.UpdateCommand.Parameters[16].Value = ((object)(1));
+                this.Adapter.UpdateCommand.Parameters[17].Value = global::System.DBNull.Value;
             }
-            this.Adapter.UpdateCommand.Parameters[17].Value = ((int)(Original_id_responsable));
-            this.Adapter.UpdateCommand.Parameters[18].Value = ((int)(Original_id_jalon));
-            this.Adapter.UpdateCommand.Parameters[19].Value = ((int)(id));
+            this.Adapter.UpdateCommand.Parameters[18].Value = ((int)(Original_id_responsable));
+            this.Adapter.UpdateCommand.Parameters[19].Value = ((int)(Original_id_jalon));
+            if ((Original_avancement.HasValue == true)) {
+                this.Adapter.UpdateCommand.Parameters[20].Value = ((object)(0));
+                this.Adapter.UpdateCommand.Parameters[21].Value = ((int)(Original_avancement.Value));
+            }
+            else {
+                this.Adapter.UpdateCommand.Parameters[20].Value = ((object)(1));
+                this.Adapter.UpdateCommand.Parameters[21].Value = global::System.DBNull.Value;
+            }
+            this.Adapter.UpdateCommand.Parameters[22].Value = ((int)(id));
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.UpdateCommand.Connection.State;
             if (((this.Adapter.UpdateCommand.Connection.State & global::System.Data.ConnectionState.Open) 
                         != global::System.Data.ConnectionState.Open)) {
@@ -5099,35 +5169,32 @@ SELECT id, libelle, description, date_debut, date_fin, duree, id_tache_precente,
                     string libelle, 
                     string description, 
                     System.DateTime date_debut, 
-                    global::System.Nullable<global::System.DateTime> date_fin, 
+                    global::System.Nullable<global::System.DateTime> date_reelle_debut, 
                     int duree, 
                     global::System.Nullable<int> id_tache_precente, 
                     int id_responsable, 
                     int id_jalon, 
+                    global::System.Nullable<int> avancement, 
                     int Original_id, 
                     string Original_libelle, 
                     string Original_description, 
                     System.DateTime Original_date_debut, 
-                    global::System.Nullable<global::System.DateTime> Original_date_fin, 
+                    global::System.Nullable<global::System.DateTime> Original_date_reelle_debut, 
                     int Original_duree, 
                     global::System.Nullable<int> Original_id_tache_precente, 
                     int Original_id_responsable, 
-                    int Original_id_jalon) {
-            return this.Update(libelle, description, date_debut, date_fin, duree, id_tache_precente, id_responsable, id_jalon, Original_id, Original_libelle, Original_description, Original_date_debut, Original_date_fin, Original_duree, Original_id_tache_precente, Original_id_responsable, Original_id_jalon, Original_id);
+                    int Original_id_jalon, 
+                    global::System.Nullable<int> Original_avancement) {
+            return this.Update(libelle, description, date_debut, date_reelle_debut, duree, id_tache_precente, id_responsable, id_jalon, avancement, Original_id, Original_libelle, Original_description, Original_date_debut, Original_date_reelle_debut, Original_duree, Original_id_tache_precente, Original_id_responsable, Original_id_jalon, Original_avancement, Original_id);
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Delete, false)]
-        public virtual int deleteTache(string id) {
+        public virtual int deleteTache(int id) {
             global::System.Data.SqlClient.SqlCommand command = this.CommandCollection[1];
-            if ((id == null)) {
-                throw new global::System.ArgumentNullException("id");
-            }
-            else {
-                command.Parameters[0].Value = ((string)(id));
-            }
+            command.Parameters[0].Value = ((int)(id));
             global::System.Data.ConnectionState previousConnectionState = command.Connection.State;
             if (((command.Connection.State & global::System.Data.ConnectionState.Open) 
                         != global::System.Data.ConnectionState.Open)) {
@@ -5149,7 +5216,7 @@ SELECT id, libelle, description, date_debut, date_fin, duree, id_tache_precente,
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Insert, false)]
-        public virtual int insertTache(string libelle, string description, string date_debut, string date_fin, int duree, global::System.Nullable<int> id_tache_precente, int id_responsable, int id_jalon) {
+        public virtual int insertTache(string libelle, string description, System.DateTime date_debut, global::System.Nullable<global::System.DateTime> date_reelle_debut, int duree, global::System.Nullable<int> id_tache_precente, int id_responsable, int id_jalon, global::System.Nullable<int> avancement) {
             global::System.Data.SqlClient.SqlCommand command = this.CommandCollection[4];
             if ((libelle == null)) {
                 throw new global::System.ArgumentNullException("libelle");
@@ -5163,17 +5230,12 @@ SELECT id, libelle, description, date_debut, date_fin, duree, id_tache_precente,
             else {
                 command.Parameters[1].Value = ((string)(description));
             }
-            if ((date_debut == null)) {
-                throw new global::System.ArgumentNullException("date_debut");
+            command.Parameters[2].Value = ((System.DateTime)(date_debut));
+            if ((date_reelle_debut.HasValue == true)) {
+                command.Parameters[3].Value = ((System.DateTime)(date_reelle_debut.Value));
             }
             else {
-                command.Parameters[2].Value = ((string)(date_debut));
-            }
-            if ((date_fin == null)) {
                 command.Parameters[3].Value = global::System.DBNull.Value;
-            }
-            else {
-                command.Parameters[3].Value = ((string)(date_fin));
             }
             command.Parameters[4].Value = ((int)(duree));
             if ((id_tache_precente.HasValue == true)) {
@@ -5184,6 +5246,12 @@ SELECT id, libelle, description, date_debut, date_fin, duree, id_tache_precente,
             }
             command.Parameters[6].Value = ((int)(id_responsable));
             command.Parameters[7].Value = ((int)(id_jalon));
+            if ((avancement.HasValue == true)) {
+                command.Parameters[8].Value = ((int)(avancement.Value));
+            }
+            else {
+                command.Parameters[8].Value = global::System.DBNull.Value;
+            }
             global::System.Data.ConnectionState previousConnectionState = command.Connection.State;
             if (((command.Connection.State & global::System.Data.ConnectionState.Open) 
                         != global::System.Data.ConnectionState.Open)) {
@@ -5205,7 +5273,7 @@ SELECT id, libelle, description, date_debut, date_fin, duree, id_tache_precente,
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Update, false)]
-        public virtual int updateTache(int id, string libelle, string description, System.DateTime date_debut, global::System.Nullable<global::System.DateTime> date_fin, int duree, global::System.Nullable<int> id_tache_precente, int id_responsable, int id_jalon) {
+        public virtual int updateTache(int id, string libelle, string description, System.DateTime date_debut, global::System.Nullable<global::System.DateTime> date_reelle_debut, int duree, global::System.Nullable<int> id_tache_precente, int id_responsable, int id_jalon, int avancement) {
             global::System.Data.SqlClient.SqlCommand command = this.CommandCollection[5];
             command.Parameters[0].Value = ((int)(id));
             if ((libelle == null)) {
@@ -5221,8 +5289,8 @@ SELECT id, libelle, description, date_debut, date_fin, duree, id_tache_precente,
                 command.Parameters[2].Value = ((string)(description));
             }
             command.Parameters[3].Value = ((System.DateTime)(date_debut));
-            if ((date_fin.HasValue == true)) {
-                command.Parameters[4].Value = ((System.DateTime)(date_fin.Value));
+            if ((date_reelle_debut.HasValue == true)) {
+                command.Parameters[4].Value = ((System.DateTime)(date_reelle_debut.Value));
             }
             else {
                 command.Parameters[4].Value = global::System.DBNull.Value;
@@ -5236,6 +5304,7 @@ SELECT id, libelle, description, date_debut, date_fin, duree, id_tache_precente,
             }
             command.Parameters[7].Value = ((int)(id_responsable));
             command.Parameters[8].Value = ((int)(id_jalon));
+            command.Parameters[9].Value = ((int)(avancement));
             global::System.Data.ConnectionState previousConnectionState = command.Connection.State;
             if (((command.Connection.State & global::System.Data.ConnectionState.Open) 
                         != global::System.Data.ConnectionState.Open)) {
@@ -5377,42 +5446,42 @@ SELECT id, libelle, description, date_debut, date_fin, duree, id_tache_precente,
             tableMapping.DataSetTable = "Exigence";
             tableMapping.ColumnMappings.Add("id", "id");
             tableMapping.ColumnMappings.Add("type", "type");
-            tableMapping.ColumnMappings.Add("id_jalon", "id_jalon");
             tableMapping.ColumnMappings.Add("libelle", "libelle");
+            tableMapping.ColumnMappings.Add("id_projet", "id_projet");
             this._adapter.TableMappings.Add(tableMapping);
             this._adapter.DeleteCommand = new global::System.Data.SqlClient.SqlCommand();
             this._adapter.DeleteCommand.Connection = this.Connection;
             this._adapter.DeleteCommand.CommandText = "DELETE FROM [Exigence] WHERE (([id] = @Original_id) AND ([type] = @Original_type)" +
                 " AND ((@IsNull_libelle = 1 AND [libelle] IS NULL) OR ([libelle] = @Original_libe" +
-                "lle)) AND ([id_jalon] = @Original_id_jalon))";
+                "lle)) AND ([id_projet] = @Original_id_projet))";
             this._adapter.DeleteCommand.CommandType = global::System.Data.CommandType.Text;
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_id", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "id", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_type", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "type", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_libelle", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "libelle", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_libelle", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "libelle", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_id_jalon", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "id_jalon", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_id_projet", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "id_projet", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.InsertCommand = new global::System.Data.SqlClient.SqlCommand();
             this._adapter.InsertCommand.Connection = this.Connection;
-            this._adapter.InsertCommand.CommandText = "INSERT INTO [Exigence] ([type], [libelle], [id_jalon]) VALUES (@type, @libelle, @" +
-                "id_jalon);\r\nSELECT id, type, libelle, id_jalon FROM Exigence WHERE (id = SCOPE_I" +
-                "DENTITY())";
+            this._adapter.InsertCommand.CommandText = "INSERT INTO [Exigence] ([type], [libelle], [id_projet]) VALUES (@type, @libelle, " +
+                "@id_projet);\r\nSELECT id, type, libelle, id_projet FROM Exigence WHERE (id = SCOP" +
+                "E_IDENTITY())";
             this._adapter.InsertCommand.CommandType = global::System.Data.CommandType.Text;
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@type", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "type", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@libelle", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "libelle", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@id_jalon", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "id_jalon", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@id_projet", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "id_projet", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand = new global::System.Data.SqlClient.SqlCommand();
             this._adapter.UpdateCommand.Connection = this.Connection;
-            this._adapter.UpdateCommand.CommandText = @"UPDATE [Exigence] SET [type] = @type, [libelle] = @libelle, [id_jalon] = @id_jalon WHERE (([id] = @Original_id) AND ([type] = @Original_type) AND ((@IsNull_libelle = 1 AND [libelle] IS NULL) OR ([libelle] = @Original_libelle)) AND ([id_jalon] = @Original_id_jalon));
-SELECT id, type, libelle, id_jalon FROM Exigence WHERE (id = @id)";
+            this._adapter.UpdateCommand.CommandText = @"UPDATE [Exigence] SET [type] = @type, [libelle] = @libelle, [id_projet] = @id_projet WHERE (([id] = @Original_id) AND ([type] = @Original_type) AND ((@IsNull_libelle = 1 AND [libelle] IS NULL) OR ([libelle] = @Original_libelle)) AND ([id_projet] = @Original_id_projet));
+SELECT id, type, libelle, id_projet FROM Exigence WHERE (id = @id)";
             this._adapter.UpdateCommand.CommandType = global::System.Data.CommandType.Text;
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@type", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "type", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@libelle", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "libelle", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@id_jalon", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "id_jalon", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@id_projet", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "id_projet", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_id", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "id", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_type", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "type", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_libelle", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "libelle", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_libelle", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "libelle", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_id_jalon", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "id_jalon", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_id_projet", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "id_projet", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@id", global::System.Data.SqlDbType.Int, 4, global::System.Data.ParameterDirection.Input, 0, 0, "id", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
         }
         
@@ -5429,20 +5498,20 @@ SELECT id, type, libelle, id_jalon FROM Exigence WHERE (id = @id)";
             this._commandCollection = new global::System.Data.SqlClient.SqlCommand[3];
             this._commandCollection[0] = new global::System.Data.SqlClient.SqlCommand();
             this._commandCollection[0].Connection = this.Connection;
-            this._commandCollection[0].CommandText = "SELECT        id, type, libelle, id_jalon\r\nFROM            Exigence\r\nWHERE       " +
-                " (id_jalon = @id_jalon)";
+            this._commandCollection[0].CommandText = "SELECT        id, type, libelle, id_projet\r\nFROM            Exigence\r\nWHERE      " +
+                "  (id_projet = @id_projet)";
             this._commandCollection[0].CommandType = global::System.Data.CommandType.Text;
-            this._commandCollection[0].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@id_jalon", global::System.Data.SqlDbType.Int, 4, global::System.Data.ParameterDirection.Input, 0, 0, "id_jalon", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._commandCollection[0].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@id_projet", global::System.Data.SqlDbType.Int, 4, global::System.Data.ParameterDirection.Input, 0, 0, "id_projet", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._commandCollection[1] = new global::System.Data.SqlClient.SqlCommand();
             this._commandCollection[1].Connection = this.Connection;
-            this._commandCollection[1].CommandText = "SELECT id,type,libelle, id_jalon FROM Exigence WHERE (id = @id)";
+            this._commandCollection[1].CommandText = "SELECT id, id_projet, libelle, type FROM Exigence WHERE (id = @id)";
             this._commandCollection[1].CommandType = global::System.Data.CommandType.Text;
             this._commandCollection[1].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@id", global::System.Data.SqlDbType.Int, 4, global::System.Data.ParameterDirection.Input, 0, 0, "id", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._commandCollection[2] = new global::System.Data.SqlClient.SqlCommand();
             this._commandCollection[2].Connection = this.Connection;
-            this._commandCollection[2].CommandText = "SELECT e.id, e.type, e.libelle, e.id_jalon FROM Exigence AS e INNER JOIN AssocExi" +
-                "Tache AS a ON e.id = a.id_exigence INNER JOIN Tache AS t ON a.id_tache = t.id WH" +
-                "ERE (t.id = @id_tache)";
+            this._commandCollection[2].CommandText = "SELECT e.id, e.id_projet, e.libelle, e.type FROM Exigence AS e INNER JOIN AssocEx" +
+                "iTache AS a ON e.id = a.id_exigence INNER JOIN Tache AS t ON a.id_tache = t.id W" +
+                "HERE (t.id = @id_tache)";
             this._commandCollection[2].CommandType = global::System.Data.CommandType.Text;
             this._commandCollection[2].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@id_tache", global::System.Data.SqlDbType.Int, 4, global::System.Data.ParameterDirection.Input, 0, 0, "id", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
         }
@@ -5451,9 +5520,9 @@ SELECT id, type, libelle, id_jalon FROM Exigence WHERE (id = @id)";
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Select, true)]
-        public virtual DataSet1.ExigenceDataTable getExigencesByJalon(int id_jalon) {
+        public virtual DataSet1.ExigenceDataTable getExigencesByProjet(int id_projet) {
             this.Adapter.SelectCommand = this.CommandCollection[0];
-            this.Adapter.SelectCommand.Parameters[0].Value = ((int)(id_jalon));
+            this.Adapter.SelectCommand.Parameters[0].Value = ((int)(id_projet));
             DataSet1.ExigenceDataTable dataTable = new DataSet1.ExigenceDataTable();
             this.Adapter.Fill(dataTable);
             return dataTable;
@@ -5516,7 +5585,7 @@ SELECT id, type, libelle, id_jalon FROM Exigence WHERE (id = @id)";
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Delete, true)]
-        public virtual int Delete(int Original_id, string Original_type, string Original_libelle, int Original_id_jalon) {
+        public virtual int Delete(int Original_id, string Original_type, string Original_libelle, int Original_id_projet) {
             this.Adapter.DeleteCommand.Parameters[0].Value = ((int)(Original_id));
             if ((Original_type == null)) {
                 throw new global::System.ArgumentNullException("Original_type");
@@ -5532,7 +5601,7 @@ SELECT id, type, libelle, id_jalon FROM Exigence WHERE (id = @id)";
                 this.Adapter.DeleteCommand.Parameters[2].Value = ((object)(0));
                 this.Adapter.DeleteCommand.Parameters[3].Value = ((string)(Original_libelle));
             }
-            this.Adapter.DeleteCommand.Parameters[4].Value = ((int)(Original_id_jalon));
+            this.Adapter.DeleteCommand.Parameters[4].Value = ((int)(Original_id_projet));
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.DeleteCommand.Connection.State;
             if (((this.Adapter.DeleteCommand.Connection.State & global::System.Data.ConnectionState.Open) 
                         != global::System.Data.ConnectionState.Open)) {
@@ -5553,7 +5622,7 @@ SELECT id, type, libelle, id_jalon FROM Exigence WHERE (id = @id)";
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Insert, true)]
-        public virtual int Insert(string type, string libelle, int id_jalon) {
+        public virtual int Insert(string type, string libelle, int id_projet) {
             if ((type == null)) {
                 throw new global::System.ArgumentNullException("type");
             }
@@ -5566,7 +5635,7 @@ SELECT id, type, libelle, id_jalon FROM Exigence WHERE (id = @id)";
             else {
                 this.Adapter.InsertCommand.Parameters[1].Value = ((string)(libelle));
             }
-            this.Adapter.InsertCommand.Parameters[2].Value = ((int)(id_jalon));
+            this.Adapter.InsertCommand.Parameters[2].Value = ((int)(id_projet));
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.InsertCommand.Connection.State;
             if (((this.Adapter.InsertCommand.Connection.State & global::System.Data.ConnectionState.Open) 
                         != global::System.Data.ConnectionState.Open)) {
@@ -5587,7 +5656,7 @@ SELECT id, type, libelle, id_jalon FROM Exigence WHERE (id = @id)";
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Update, true)]
-        public virtual int Update(string type, string libelle, int id_jalon, int Original_id, string Original_type, string Original_libelle, int Original_id_jalon, int id) {
+        public virtual int Update(string type, string libelle, int id_projet, int Original_id, string Original_type, string Original_libelle, int Original_id_projet, int id) {
             if ((type == null)) {
                 throw new global::System.ArgumentNullException("type");
             }
@@ -5600,7 +5669,7 @@ SELECT id, type, libelle, id_jalon FROM Exigence WHERE (id = @id)";
             else {
                 this.Adapter.UpdateCommand.Parameters[1].Value = ((string)(libelle));
             }
-            this.Adapter.UpdateCommand.Parameters[2].Value = ((int)(id_jalon));
+            this.Adapter.UpdateCommand.Parameters[2].Value = ((int)(id_projet));
             this.Adapter.UpdateCommand.Parameters[3].Value = ((int)(Original_id));
             if ((Original_type == null)) {
                 throw new global::System.ArgumentNullException("Original_type");
@@ -5616,7 +5685,7 @@ SELECT id, type, libelle, id_jalon FROM Exigence WHERE (id = @id)";
                 this.Adapter.UpdateCommand.Parameters[5].Value = ((object)(0));
                 this.Adapter.UpdateCommand.Parameters[6].Value = ((string)(Original_libelle));
             }
-            this.Adapter.UpdateCommand.Parameters[7].Value = ((int)(Original_id_jalon));
+            this.Adapter.UpdateCommand.Parameters[7].Value = ((int)(Original_id_projet));
             this.Adapter.UpdateCommand.Parameters[8].Value = ((int)(id));
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.UpdateCommand.Connection.State;
             if (((this.Adapter.UpdateCommand.Connection.State & global::System.Data.ConnectionState.Open) 
@@ -5638,8 +5707,8 @@ SELECT id, type, libelle, id_jalon FROM Exigence WHERE (id = @id)";
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Update, true)]
-        public virtual int Update(string type, string libelle, int id_jalon, int Original_id, string Original_type, string Original_libelle, int Original_id_jalon) {
-            return this.Update(type, libelle, id_jalon, Original_id, Original_type, Original_libelle, Original_id_jalon, Original_id);
+        public virtual int Update(string type, string libelle, int id_projet, int Original_id, string Original_type, string Original_libelle, int Original_id_projet) {
+            return this.Update(type, libelle, id_projet, Original_id, Original_type, Original_libelle, Original_id_projet, Original_id);
         }
     }
     

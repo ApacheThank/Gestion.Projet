@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace Gestion.Projet.Bean
 {
-    public class Projet
+    public class Project
     {
         private int id;
         private string trigramme;
         private int id_responsable;
         private Utilisateur responsable;
 
-        public Projet(int id, string trigramme, int id_responsable)
+        public Project(int id, string trigramme, int id_responsable)
         {
             this.id = id;
             this.trigramme = trigramme;
