@@ -12,8 +12,8 @@ namespace Gestion.Projet.ServiceDA
         List<Jalon> getJalonsByProjet(int id_projet);
         List<Jalon> getJalonsByResponsable(int id_responsable);
         Jalon getJalonById(int id);
-        int deleteMedecin(int id);
-        Jalon updateMedecin(int id, string libelle, DateTime date_livraison, DateTime date_reelle, int id_projet, int id_responsable);
+        bool deleteJalon(int id);
+        Jalon updateJalon(int id, string libelle, DateTime date_livraison, DateTime date_reelle, int id_projet, int id_responsable);
         bool insertProjet(string libelle, DateTime date_livraison, DateTime date_reelle, int id_projet, int id_responsable);
     }
 }

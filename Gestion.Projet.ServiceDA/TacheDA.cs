@@ -11,7 +11,7 @@ namespace Gestion.Projet.ServiceDA
 {
     public class TacheDA: TacheInterface
     {
-        public List<Tache> getTaches(int id_jalon)
+        public List<Tache> getTachesByJalon(int id_jalon)
         {
             TacheDataTable tacheDataTable = new TacheDataTable();
             List<Tache> taches = new List<Tache>();
@@ -40,11 +40,20 @@ namespace Gestion.Projet.ServiceDA
 
         }
 
-        public int deleteTache(int id)
+        public bool deleteTache(int id)
         {
             using (TacheTableAdapter tacheTableAdapter = new TacheTableAdapter())
             {
-                int res = tacheTableAdapter.deleteTache(id);
+                int result = tacheTableAdapter.deleteTache(id);
+                bool res;
+                if (result == 0)
+                {
+                    res = false;
+                }
+                else
+                {
+                    res = true;
+                }
                 return res;
             }
         }

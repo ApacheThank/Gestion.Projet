@@ -15,11 +15,12 @@ namespace Gestion.Projet.Bean
         private int id_projet;
         private Project projet;
 
-        public Exigence(int id, string type, string libelle)
+        public Exigence(int id, string type, string libelle,int id_projet)
         {
             this.id = id;
             this.type = type;
             this.libelle = libelle;
+            this.id_projet = id_projet;
         }
 
         public int Id

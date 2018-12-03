@@ -11,8 +11,8 @@ namespace Gestion.Projet.ServiceDA
     {
         List<Project> getProjets();
         Project getProjectById(int id);
-        int deleteMedecin(int id);
-        Project updateMedecin(int id, string trigramme, int id_utilisateur);
+        bool deleteProjet(int id);
+        Project updateProjet(int id, string trigramme, int id_utilisateur);
         bool insertProjet(string trigramme, int id_utilisateur);
     }
 }

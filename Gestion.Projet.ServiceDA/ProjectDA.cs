@@ -40,16 +40,25 @@ namespace Gestion.Projet.ServiceDA
 
         }
 
-        public int deleteMedecin(int id)
+        public bool deleteProjet(int id)
         {
             using (ProjetTableAdapter projetTableAdapter = new ProjetTableAdapter())
             {
-                int res = projetTableAdapter.deleteProjet(id);
+                int result = projetTableAdapter.deleteProjet(id);
+                bool res;
+                if (result == 0)
+                {
+                    res = false;
+                }
+                else
+                {
+                    res = true;
+                }
                 return res;
             }
         }
 
-        public Project updateMedecin(int id, string trigramme, int id_utilisateur)
+        public Project updateProjet(int id, string trigramme, int id_utilisateur)
         {
             using (ProjetTableAdapter projetTableAdapter = new ProjetTableAdapter())
             {

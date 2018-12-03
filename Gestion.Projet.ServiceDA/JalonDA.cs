@@ -55,16 +55,25 @@ namespace Gestion.Projet.ServiceDA
 
         }
 
-        public int deleteMedecin(int id)
+        public bool deleteJalon(int id)
         {
             using (JalonTableAdapter jalonTableAdapter = new JalonTableAdapter())
             {
-                int res = jalonTableAdapter.deleteJalon(id);
+                int result = jalonTableAdapter.deleteJalon(id);
+                bool res;
+                if (result == 0)
+                {
+                    res = false;
+                }
+                else
+                {
+                    res = true;
+                }
                 return res;
             }
         }
 
-        public Jalon updateMedecin(int id, string libelle, DateTime date_livraison,DateTime date_reelle,int id_projet,int id_responsable)
+        public Jalon updateJalon(int id, string libelle, DateTime date_livraison,DateTime date_reelle,int id_projet,int id_responsable)
         {
             using (JalonTableAdapter jalonTableAdapter = new JalonTableAdapter())
             {
