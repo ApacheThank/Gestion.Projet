@@ -1,0 +1,48 @@
+﻿
+
+@{
+    ViewBag.Title = "Editer le projet";
+}
+<h3>@ViewBag.Title</h3>
+
+@using (Html.BeginForm("Edit", "Home", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+<div class="row">
+    <div class="col-sm-6">
+        @Html.ValidationSummary("", new { @class = "text-danger" })
+        <label for="trigramme">Trigramme du projet:</label>
+        <input type="text" maxlength="3" class="form-control" id="trigramme" name="trigramme" />
+        <label class="form-control" for="checkbox_new">Ajouter nouveau responsable: </label>
+        <input type="checkbox" id="checkbox_new" onclick="new_user()"/>
+        <div id="liste">
+        <label for="ids_users">Responsable du projet: </label>
+        <select id="ids_users" class="form-control" name="ids_users">
+            @foreach (var item in ViewBag.Utilisateurs)
+            {
+                <option value="@item.Id">
+                    @item.Trigramme
+                </option>
+            }
+        </select>
+            </div>
+        <div id="new_user" hidden>
+            <label for="user_tri">Trigramme du responsable:</label>
+            <input type="text" class="form-control" id="user_tri" maxlength="3" name="user_tri" />
+        </div>
+    </div>
+</div>
+<button type="submit" class="btn btn-primary">Ajouter</button>
+<script type="text/javascript">
+    function new_user() {
+        if ($("#checkbox_new").is(":checked")) {
+            $("#liste *").prop('disabled', true);
+            $("#new_user").show();
+        } else {
+            $("#liste *").prop('disabled', false);
+            $("#new_user").hide();
+        }
+    }
+
+</script>
+
+}

@@ -48,7 +48,7 @@ namespace Gestion.Projet.Service
             return FactoryServicesDA.createUtilisateurServices().getUtilisateurById(id);
         }
 
-        public bool insertUtilisateur(string trigramme)
+        public Utilisateur insertUtilisateur(string trigramme)
         {
             return FactoryServicesDA.createUtilisateurServices().insertUtilisateur(trigramme);
         }

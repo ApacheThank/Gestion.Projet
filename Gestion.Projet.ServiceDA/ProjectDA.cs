@@ -20,7 +20,9 @@ namespace Gestion.Projet.ServiceDA
                 projetDataTable = projetTableAdapter.getProjets();
                 foreach (ProjetRow row in projetDataTable)
                 {
-                    projets.Add(new Project(row.id, row.trigramme,row.id_utilisateur));
+                    Project projet = new Project(row.id, row.trigramme, row.id_utilisateur);
+                    projet.Responsable = FactoryServicesDA.createUtilisateurServices().getUtilisateurById(row.id_utilisateur);
+                    projets.Add(projet);
                 }
                 return projets;
             }
@@ -35,6 +37,7 @@ namespace Gestion.Projet.ServiceDA
                 projetDataTable = projetTableAdapter.getProjetById(id);
                 ProjetRow row = projetDataTable[0];
                 Project projet = new Project(row.id, row.trigramme,row.id_utilisateur);
+                projet.Responsable = FactoryServicesDA.createUtilisateurServices().getUtilisateurById(row.id_utilisateur);
                 return projet;
             }
 

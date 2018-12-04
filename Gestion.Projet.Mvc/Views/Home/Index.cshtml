@@ -1,0 +1,97 @@
+﻿@using Gestion.Projet.Bean
+@model List<Project>
+
+@{
+                /**/
+
+                ViewBag.Title = "Gestion des projets";
+}
+<h2>@ViewBag.Title</h2>
+<div class="row">
+    <div class="col-sm-6">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Trigramme
+                    </th>
+                    <th>
+                        Responsable
+                    </th>
+                    <th>
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td><a role="button" href="/Jalon/Index/@item.Id" class="list-group-item list-group-item-action">@Html.DisplayFor(modelItem => item.Trigramme)</a></td>
+                        <td><div class="col-sm-2">@item.Responsable.Trigramme</div></td>
+                        <td>
+                            <a role="button" href="/Home/Edit/@item.Id" class="btn btn-warning">Editer</a>
+                            <a role="button" href="/Home/Delete/@item.Id" class="btn btn-danger">Supprimer</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <input type="button" class="btn btn-default" href="#myModal" value="Ajouter" data-toggle="modal" />
+    </div>
+</div>
+
+<!-- Modal -->
+@using (Html.BeginForm("Create", "Home", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    <div class="modal fade" id="myModal" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Nouveau projet</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @Html.ValidationSummary("", new { @class = "text-danger" })
+                    <label for="trigramme">Trigramme du projet:</label>
+                    <input type="text" maxlength="3" class="form-control" id="trigramme" name="trigramme" />
+                    <label class="form-control" for="checkbox_new">Ajouter nouveau responsable: </label>
+                    <input type="checkbox" id="checkbox_new" onclick="new_user()" />
+                    <div id="liste">
+                        <label for="ids_users">Responsable du projet: </label>
+                        <select id="ids_users" class="form-control" name="ids_users">
+                            @foreach (var item in ViewBag.Utilisateurs)
+                            {
+                                <option value="@item.Id">
+                                    @item.Trigramme
+                                </option>
+                            }
+                        </select>
+                    </div>
+                    <div id="new_user" hidden>
+                        <label for="user_tri">Trigramme du responsable:</label>
+                        <input type="text" class="form-control" id="user_tri" maxlength="3" name="user_tri" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Ajouter</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        function new_user() {
+            if ($("#checkbox_new").is(":checked")) {
+                $("#liste *").prop('disabled', true);
+                $("#new_user").show();
+            } else {
+                $("#liste *").prop('disabled', false);
+                $("#new_user").hide();
+            }
+        }
+
+    </script>
+}

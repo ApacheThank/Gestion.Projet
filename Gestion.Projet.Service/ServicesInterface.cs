@@ -17,7 +17,7 @@ namespace Gestion.Projet.Service
 
         List<Utilisateur> getUtilisateurs();
         Utilisateur getUtilisateurById(int id);
-        bool insertUtilisateur(string trigramme);
+        Utilisateur insertUtilisateur(string trigramme);
 
         List<Jalon> getJalonsByProjet(int id_projet);
         List<Jalon> getJalonsByResponsable(int id_responsable);

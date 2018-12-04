@@ -11,7 +11,7 @@ namespace Gestion.Projet.ServiceDA
     {
         List<Utilisateur> getUtilisateurs();
         Utilisateur getUtilisateurById(int id);
-        bool insertUtilisateur(string trigramme);
+        Utilisateur insertUtilisateur(string trigramme);
 
     }
 }

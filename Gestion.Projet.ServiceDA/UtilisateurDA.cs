@@ -40,21 +40,13 @@ namespace Gestion.Projet.ServiceDA
 
         }
 
-        public bool insertUtilisateur(string trigramme)
+        public Utilisateur insertUtilisateur(string trigramme)
         {
             using (UtilisateurTableAdapter utilisateurTableAdapter = new UtilisateurTableAdapter())
             {
                 int id = utilisateurTableAdapter.insertUtilisateur(trigramme);
-                bool res;
-                if (id == 0)
-                {
-                    res = false;
-                }
-                else
-                {
-                    res = true;
-                }
-                return res;
+                Utilisateur utilisateur = new Utilisateur(id, trigramme);
+                return utilisateur;
             }
         }
     }

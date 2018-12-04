@@ -1,0 +1,44 @@
+﻿@using Gestion.Projet.Bean
+@model List<Jalon>
+
+@{
+                /**/
+
+                /**/
+
+                ViewBag.Title = "Gestion des projets";
+}
+<h2>@ViewBag.Title</h2>
+<div class="row">
+    <div class="col-sm-6">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Libelle
+                    </th>
+                    <th>
+                        Date livraison
+                    </th>
+                    <th>
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td><a role="button" href="/Jalon/Edit/@item.Id" class="list-group-item list-group-item-action">@Html.DisplayFor(modelItem => item.Libelle)</a></td>
+                        <td><div class="col-sm-2">@item.Date_livraison</div></td>
+                        <td>
+                            <a role="button" href="/Jalon/Edit/@item.Id" class="btn btn-warning">Editer</a>
+                            <a role="button" href="/Jalon/Delete/@item.Id" class="btn btn-danger">Supprimer</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+      
+    </div>
+</div>
