@@ -1,0 +1,147 @@
+﻿@using Gestion.Projet.Bean
+@model List<Tache>
+
+@{
+    ViewBag.Title = "Liste des tâches";
+}
+<h2>@ViewBag.Title</h2>
+
+@if (ViewBag.Alert != null)
+{
+    <div class="alert alert-success" role="alert">
+        @ViewBag.Result
+    </div>
+}
+<div class="row">
+    <div class="col-lg-8">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">
+                        Libelle
+                    </th>
+                    <th scope="col">
+                        Description
+                    </th>
+                    <th scope="col">
+                        Date début
+                    </th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr class="table-row">
+                       
+                        <td><a role="button" href="/Tache/Details/@item.Id">@Html.DisplayFor(modelItem => item.Libelle)</a></td>
+                        <td><a role="button" href="/Tache/Details/@item.Id">@Html.DisplayFor(modelItem => item.Description)</a></td>
+                        
+                        <td>
+                            <a role="button" href="/Tache/Edit/@item.Id" class="btn btn-warning">Editer</a>
+                            <a role="button" href="/Tache/Delete/@item.Id" class="btn btn-danger">Supprimer</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <input type="button" class="btn btn-default" href="#myModal" value="Ajouter" data-toggle="modal" />
+    </div>
+</div>
+
+<!-- Modal -->
+@using (Html.BeginForm("Create", "Tache", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    <div class="modal fade" id="myModal" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ajouter un jalon</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="col-sm-5">
+                        @Html.ValidationSummary("", new { @class = "text-danger" })
+                        <label for="libelle">Libelle:</label>
+                        <input type="text" class="form-control" id="libelle" name="libelle" />
+                        <label for="description">Description:</label>
+                        <input type="text" class="form-control" id="description" name="description" />
+                        <label for="date_debut">Date de début:</label>
+                        <input type="date" class="form-control" id="date_debut" name="date_debut" />
+                        <label for="duree">Durée:</label>
+                        <input type="number" class="form-control" id="duree" name="duree" />
+                        <label for="tache_precedente">Tâche précedente(facultatif):</label>
+                        <select id="tache_precedente" class="form-control" name="tache_precedente">
+                            <option value="0">Non</option>
+                            @foreach (var item in Model)
+                            {
+                                <option value="@item.Id">
+                                    @item.Libelle
+                                </option>
+                            }
+                        </select>
+                        <label class="form-control" for="checkbox_new">Ajouter nouveau responsable: </label>
+                        <input type="checkbox" id="checkbox_new" onclick="new_user()" />
+                        <div id="liste">
+                            <label for="ids_users">Responsable du jalon: </label>
+                            <select id="ids_users" class="form-control" name="ids_users">
+                                @foreach (var item in ViewBag.Utilisateurs)
+                                {
+                                    <option value="@item.Id">
+                                        @item.Trigramme
+                                    </option>
+                                }
+                            </select>
+                        </div>
+                        <div id="new_user" hidden>
+                            <label for="user_tri">Trigramme du responsable:</label>
+                            <input type="text" class="form-control" id="user_tri" maxlength="3" name="user_tri" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-5">
+                    <select id="id_ss" class="form-control" name="id_ss">
+                        @foreach (var item in ViewBag.Utilisateurs)
+                        {
+                            <option value="@item.Id">
+                                @item.Trigramme
+                            </option>
+                        }
+                    </select>
+
+                </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Ajouter</button>
+                    </div>
+                </div>
+    </div>
+        </div>
+        <style type="text/css">
+
+            a {
+                text-decoration: none !important;
+                color: black;
+            }
+            a:hover {
+                color: black;
+                cursor: pointer;
+            }
+
+        </style>
+    <script type="text/javascript">
+        function new_user() {
+            if ($("#checkbox_new").is(":checked")) {
+                $("#liste *").prop('disabled', true);
+                $("#new_user").show();
+            } else {
+                $("#liste *").prop('disabled', false);
+                $("#new_user").hide();
+            }
+        }
+
+    </script>
+}

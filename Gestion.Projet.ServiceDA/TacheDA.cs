@@ -20,7 +20,12 @@ namespace Gestion.Projet.ServiceDA
                 tacheDataTable = tacheTableAdapter.getTachesByJalon(id_jalon);
                 foreach (TacheRow row in tacheDataTable)
                 {
-                    taches.Add(new Tache(row.id,row.libelle,row.description,row.date_debut,row.date_reelle_debut,row.duree,row.id_tache_precente,row.id_responsable,row.id_jalon,row.avancement));
+                    Tache tache = new Tache(row.id, row.libelle, row.description, row.date_debut, row.duree, row.id_tache_precente, row.id_responsable, row.id_jalon, row.avancement);
+                    if(row["date_reelle_debut"] != DBNull.Value)
+                    {
+                        tache.Date_reelle_debut = row.date_reelle_debut;
+                    }
+                    taches.Add(tache);
                 }
                 return taches;
             }
@@ -34,7 +39,16 @@ namespace Gestion.Projet.ServiceDA
             {
                 tacheDataTable = tacheTableAdapter.getTacheById(id);
                 TacheRow row = tacheDataTable[0];
-                Tache tache = new Tache(row.id, row.libelle, row.description, row.date_debut, row.date_reelle_debut, row.duree, row.id_tache_precente, row.id_responsable, row.id_jalon, row.avancement);
+                Tache tache = new Tache(row.id, row.libelle, row.description, row.date_debut, row.duree, row.id_tache_precente, row.id_responsable, row.id_jalon, row.avancement);
+                if (row.id_tache_precente > 0)
+                {
+                    Tache tache_precedente = FactoryServicesDA.createTacheServices().getTacheById(row.id_tache_precente);
+                    tache.Tache_precedente = tache_precedente;
+                }
+                Utilisateur responsable = FactoryServicesDA.createUtilisateurServices().getUtilisateurById(row.id_responsable);
+                tache.Responsable = responsable;
+                Jalon jalon = FactoryServicesDA.createJalonServices().getJalonById(row.id_jalon);
+                tache.Jalon = jalon;
                 return tache;
             }
 
@@ -63,16 +77,17 @@ namespace Gestion.Projet.ServiceDA
             using (TacheTableAdapter tacheTableAdapter = new TacheTableAdapter())
             {
                 tacheTableAdapter.updateTache(id, libelle, description, date_debut, date_reelle_debut, duree, id_tache_precente, id_responsable, id_jalon, avancement);
-                Tache tache = new Tache(id,libelle,description,date_debut,date_reelle_debut,duree,id_tache_precente,id_responsable,id_jalon,avancement);
+                Tache tache = new Tache(id,libelle,description,date_debut,duree,id_tache_precente,id_responsable,id_jalon,avancement);
+                
                 return tache;
             }
         }
 
-        public bool insertTache(string libelle,string description,DateTime date_debut,DateTime date_reelle_debut,int duree,int id_tache_precente,int id_responsable,int id_jalon, int avancement)
+        public bool insertTache(string libelle,string description,DateTime date_debut,int duree,int id_tache_precente,int id_responsable,int id_jalon, int avancement)
         {
             using (TacheTableAdapter tacheTableAdapter = new TacheTableAdapter())
             {
-                int id = tacheTableAdapter.insertTache(libelle, description, date_debut, date_reelle_debut, duree, id_tache_precente, id_responsable, id_jalon, avancement);
+                int id = tacheTableAdapter.insertTache(libelle, description, date_debut,null, duree, id_tache_precente, id_responsable, id_jalon, avancement);
                 bool res;
                 if (id == 0)
                 {

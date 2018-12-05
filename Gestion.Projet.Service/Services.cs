@@ -81,9 +81,9 @@ namespace Gestion.Projet.Service
             return jalon;
         }
 
-        public bool insertProjet(string libelle, DateTime date_livraison, DateTime date_reelle, int id_projet, int id_responsable)
+        public bool insertJalon(string libelle, DateTime date_livraison, int id_projet, int id_responsable)
         {
-            bool res = FactoryServicesDA.createJalonServices().insertProjet(libelle, date_livraison, date_reelle, id_projet, id_responsable);
+            bool res = FactoryServicesDA.createJalonServices().insertJalon(libelle, date_livraison, id_projet, id_responsable);
             return res;
         }
 
@@ -110,9 +110,9 @@ namespace Gestion.Projet.Service
             return FactoryServicesDA.createTacheServices().updateTache(id, libelle, description, date_debut, date_reelle_debut, duree, id_tache_precente, id_responsable, id_jalon, avancement);
         }
 
-        public bool insertTache(string libelle, string description, DateTime date_debut, DateTime date_reelle_debut, int duree, int id_tache_precente, int id_responsable, int id_jalon, int avancement)
+        public bool insertTache(string libelle, string description, DateTime date_debut, int duree, int id_tache_precente, int id_responsable, int id_jalon, int avancement)
         {
-            bool res = FactoryServicesDA.createTacheServices().insertTache(libelle, description, date_debut, date_reelle_debut, duree, id_tache_precente, id_responsable, id_jalon, avancement);
+            bool res = FactoryServicesDA.createTacheServices().insertTache(libelle, description, date_debut, duree, id_tache_precente, id_responsable, id_jalon, avancement);
             return res;
         }
 

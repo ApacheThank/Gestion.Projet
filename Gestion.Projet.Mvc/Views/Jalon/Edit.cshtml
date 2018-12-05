@@ -1,0 +1,65 @@
+﻿
+
+@{
+    ViewBag.Title = "Editer le projet";
+}
+<h3>@ViewBag.Title</h3>
+
+<!-- Modal -->
+@using (Html.BeginForm("Edit", "Jalon", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    <div class="row">
+        <div class="col-sm-6">
+            @Html.ValidationSummary("", new { @class = "text-danger" })
+            <label for="libelle">Libelle du jalon:</label>
+            <input type="text" class="form-control" id="libelle" name="libelle" />
+            <label for="date_livraison">Date de livraison prevue:</label>
+            <input type="date" class="form-control" id="date_livraison" name="date_livraison" />
+            <label class="form-control" for="checkbox_new">Ajouter nouveau responsable: </label>
+            <input type="checkbox" id="checkbox_new" onclick="new_user()" />
+            <div id="liste">
+                <label for="ids_users">Responsable du jalon: </label>
+                <select id="ids_users" class="form-control" name="ids_users">
+                    @foreach (var item in ViewBag.Utilisateurs)
+                    {
+                        <option value="@item.Id">
+                            @item.Trigramme
+                        </option>
+                    }
+                </select>
+            </div>
+            <div id="new_user" hidden>
+                <label for="user_tri">Trigramme du responsable:</label>
+                <input type="text" class="form-control" id="user_tri" maxlength="3" name="user_tri" />
+            </div>
+            <label class="form-control" for="dateReelle">Saisir la date de livraison réelle: </label>
+            <input type="checkbox" id="dateReelle" onclick="date_reelle()" />
+            <div id="div_date_reelle" hidden>
+                <label for="date_reelle">Date de réelle:</label>
+                <input type="date" class="form-control" id="date_reelle" name="date_reelle" />
+            </div>
+            <button type="submit" class="btn btn-primary">Ajouter</button>
+        </div>
+    </div>
+
+<script type="text/javascript">
+    function new_user() {
+        if ($("#checkbox_new").is(":checked")) {
+            $("#liste *").prop('disabled', true);
+            $("#new_user").show();
+        } else {
+            $("#liste *").prop('disabled', false);
+            $("#new_user").hide();
+        }
+    }
+
+    function date_reelle() {
+        if ($("#dateReelle").is(":checked")) {
+            $("#div_date_reelle").show();
+        } else {
+            $("#div_date_reelle").hide();
+        }
+    }
+
+</script>
+}

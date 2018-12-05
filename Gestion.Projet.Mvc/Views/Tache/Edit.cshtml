@@ -1,0 +1,73 @@
+﻿@using Gestion.Projet.Bean
+@model Tuple<List<Utilisateur>, List<Tache>, List<Exigence>,Tache>
+
+@{
+    ViewBag.Title = "Editer la tâche";
+}
+<h3>@ViewBag.Title</h3>
+
+@using (Html.BeginForm("Edit", "Tache", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    <div class="row">
+        <div class="col-sm-6">
+            @Html.ValidationSummary("", new { @class = "text-danger" })
+            <label for="libelle">Libelle:</label>
+            <input type="text" class="form-control" value="@Model.Item4.Libelle" id="libelle" name="libelle" />
+            <label for="description">Description:</label>
+            <input type="text" class="form-control" value="@Model.Item4.Description" id="description" name="description" />
+            <label for="date_debut">Date de début:</label>
+            <input type="date" class="form-control" value="@Model.Item4.Date_debut" id="date_debut" name="date_debut" />
+            <label for="date_reelle">Date réelle de début:</label>
+            <input type="date" class="form-control" value="@Model.Item4.Date_reelle_debut" id="date_reelle" name="date_reelle" />
+            <label for="duree">Durée:</label>
+            <input type="number" class="form-control" value="@Model.Item4.Duree" id="duree" name="duree" />
+            <label for="avancement">Avancement de tâche:</label>
+            <select id="avancement" class="form-control"  name="avancement">
+                <option value="0">Non démarrée</option>
+                <option value="1">En cours</option>
+                <option value="2">Terminée</option>
+            </select>
+            <label for="tache_precedente">Tâche précedente(facultatif):</label>
+            <select id="tache_precedente" class="form-control" name="tache_precedente">
+                <option value="0">Non</option>
+                @foreach (var item in Model.Item2)
+                {
+                    <option value="@item.Id">
+                        @item.Libelle
+                    </option>
+                }
+            </select>
+            <label class="form-control" for="checkbox_new">Ajouter nouveau responsable: </label>
+            <input type="checkbox" id="checkbox_new" onclick="new_user()" />
+            <div id="liste">
+                <label for="ids_users">Responsable du jalon: </label>
+                <select id="ids_users" class="form-control" name="ids_users">
+                    @foreach (var item in Model.Item1)
+                    {
+                        <option value="@item.Id">
+                            @item.Trigramme
+                        </option>
+                    }
+                </select>
+            </div>
+            <div id="new_user" hidden>
+                <label for="user_tri">Trigramme du responsable:</label>
+                <input type="text" class="form-control" id="user_tri" maxlength="3" name="user_tri" />
+            </div>
+        </div>
+</div>
+    <button type="submit" class="btn btn-primary">Ajouter</button>
+    <script type="text/javascript">
+    function new_user() {
+        if ($("#checkbox_new").is(":checked")) {
+            $("#liste *").prop('disabled', true);
+            $("#new_user").show();
+        } else {
+            $("#liste *").prop('disabled', false);
+            $("#new_user").hide();
+        }
+    }
+
+    </script>
+
+}

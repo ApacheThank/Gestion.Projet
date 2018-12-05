@@ -141,6 +141,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\JalonController.cs" />
+    <Compile Include="Controllers\TacheController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -184,6 +185,10 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Home\Edit.cshtml" />
     <Content Include="Views\Jalon\Index.cshtml" />
+    <Content Include="Views\Tache\Index.cshtml" />
+    <Content Include="Views\Jalon\Edit.cshtml" />
+    <Content Include="Views\Tache\Edit.cshtml" />
+    <Content Include="Views\Tache\Details.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -22,13 +22,12 @@ namespace Gestion.Projet.Bean
         private Jalon jalon;
         private Tache tache_precedente;
 
-        public Tache(int id, string libelle, string description, DateTime date_debut, DateTime date_reelle_debut, int duree, int id_tache_precedente, int id_responsable, int id_jalon, int avancement)
+        public Tache(int id, string libelle, string description, DateTime date_debut, int duree, int id_tache_precedente, int id_responsable, int id_jalon, int avancement)
         {
             this.id = id;
             this.libelle = libelle;
             this.description = description;
             this.date_debut = date_debut;
-            this.date_reelle_debut = date_reelle_debut;
             this.duree = duree;
             this.id_tache_precedente = id_tache_precedente;
             this.id_responsable = id_responsable;
@@ -60,7 +59,7 @@ namespace Gestion.Projet.Bean
             set { this.date_debut = value; }
         }
 
-        public DateTime Date_fin
+        public DateTime Date_reelle_debut
         {
             get { return this.date_reelle_debut; }
             set { this.date_reelle_debut = value; }

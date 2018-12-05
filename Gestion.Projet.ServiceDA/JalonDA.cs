@@ -83,11 +83,11 @@ namespace Gestion.Projet.ServiceDA
             }
         }
 
-        public bool insertProjet(string libelle, DateTime date_livraison, DateTime date_reelle, int id_projet, int id_responsable)
+        public bool insertJalon(string libelle, DateTime date_livraison, int id_projet, int id_responsable)
         {
             using (JalonTableAdapter jalonTableAdapter = new JalonTableAdapter())
             {
-                int id = jalonTableAdapter.insertJalon(libelle, date_livraison, date_reelle, id_projet, id_responsable);
+                int id = jalonTableAdapter.insertJalon(libelle, date_livraison,null, id_projet, id_responsable);
                 bool res;
                 if (id == 0)
                 {

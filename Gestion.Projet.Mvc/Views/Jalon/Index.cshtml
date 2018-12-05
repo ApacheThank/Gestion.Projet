@@ -2,13 +2,16 @@
 @model List<Jalon>
 
 @{
-                /**/
-
-                /**/
-
-                ViewBag.Title = "Gestion des projets";
+    ViewBag.Title = "Liste des jalons";
 }
 <h2>@ViewBag.Title</h2>
+
+@if (ViewBag.Alert != null)
+{
+    <div class="alert alert-success" role="alert">
+        @ViewBag.Result
+    </div>
+}
 <div class="row">
     <div class="col-sm-6">
         <table class="table">
@@ -29,7 +32,7 @@
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <td><a role="button" href="/Jalon/Edit/@item.Id" class="list-group-item list-group-item-action">@Html.DisplayFor(modelItem => item.Libelle)</a></td>
+                        <td><a role="button" href="/Tache/Index/@item.Id" class="list-group-item list-group-item-action">@Html.DisplayFor(modelItem => item.Libelle)</a></td>
                         <td><div class="col-sm-2">@item.Date_livraison</div></td>
                         <td>
                             <a role="button" href="/Jalon/Edit/@item.Id" class="btn btn-warning">Editer</a>
@@ -39,6 +42,51 @@
                 }
             </tbody>
         </table>
-      
+        <input type="button" class="btn btn-default" href="#myModal" value="Ajouter" data-toggle="modal" />
     </div>
 </div>
+
+<!-- Modal -->
+@using (Html.BeginForm("Create", "Jalon", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    <div class="modal fade" id="myModal" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ajouter un jalon</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @Html.ValidationSummary("", new { @class = "text-danger" })
+                    <label for="libelle">Libelle du jalon:</label>
+                    <input type="text" class="form-control" id="libelle" name="libelle" />
+                    <label for="date_livraison">Date de livraison prevue:</label>
+                    <input type="date" class="form-control" id="date_livraison" name="date_livraison" />
+                    <label class="form-control" for="checkbox_new">Ajouter nouveau responsable: </label>
+                    <input type="checkbox" id="checkbox_new" onclick="new_user()" />
+                    <div id="liste">
+                        <label for="ids_users">Responsable du jalon: </label>
+                        <select id="ids_users" class="form-control" name="ids_users">
+                            @foreach (var item in ViewBag.Utilisateurs)
+                            {
+                                <option value="@item.Id">
+                                    @item.Trigramme
+                                </option>
+                            }
+                        </select>
+                    </div>
+                    <div id="new_user" hidden>
+                        <label for="user_tri">Trigramme du responsable:</label>
+                        <input type="text" class="form-control" id="user_tri" maxlength="3" name="user_tri" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Ajouter</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

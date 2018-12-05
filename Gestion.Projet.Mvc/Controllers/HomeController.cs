@@ -99,7 +99,6 @@ namespace Gestion.Projet.Mvc.Controllers
                     }
 
                     bool res = FactoryServices.createServices().insertProjet(trigramme, id_responsable);
-                    Debug.Write(res);
                 }
                 //ViewBag.Alert = "succes";
                 //ViewBag.Result = "Medecin a été ajouté";

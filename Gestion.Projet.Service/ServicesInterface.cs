@@ -24,13 +24,13 @@ namespace Gestion.Projet.Service
         Jalon getJalonById(int id);
         bool deleteJalon(int id);
         Jalon updateJalon(int id, string libelle, DateTime date_livraison, DateTime date_reelle, int id_projet, int id_responsable);
-        bool insertProjet(string libelle, DateTime date_livraison, DateTime date_reelle, int id_projet, int id_responsable);
+        bool insertJalon(string libelle, DateTime date_livraison, int id_projet, int id_responsable);
 
         List<Tache> getTachesByJalon(int id_jalon);
         Tache getTacheById(int id);
         bool deleteTache(int id);
         Tache updateTache(int id, string libelle, string description, DateTime date_debut, DateTime date_reelle_debut, int duree, int id_tache_precente, int id_responsable, int id_jalon, int avancement);
-        bool insertTache(string libelle, string description, DateTime date_debut, DateTime date_reelle_debut, int duree, int id_tache_precente, int id_responsable, int id_jalon, int avancement);
+        bool insertTache(string libelle, string description, DateTime date_debut,int duree, int id_tache_precente, int id_responsable, int id_jalon, int avancement);
 
         List<Exigence> getExigencesByProjet(int id_projet);
         List<Exigence> getExigencesByTache(int id_tache);
