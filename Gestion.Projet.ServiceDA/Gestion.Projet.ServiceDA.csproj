@@ -56,6 +56,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataSet.cs">
+      <DependentUpon>DataSet.xsd</DependentUpon>
+    </Compile>
     <Compile Include="ExigenceInterface.cs" />
     <Compile Include="ExigenceDA.cs" />
     <Compile Include="FactoryServicesDA.cs" />

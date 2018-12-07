@@ -11,6 +11,7 @@ namespace Gestion.Projet.Bean
         private int id;
         private string trigramme;
         private int id_responsable;
+        private int etat;
         private Utilisateur responsable;
 
         public Project(int id, string trigramme, int id_responsable)
@@ -42,6 +43,12 @@ namespace Gestion.Projet.Bean
         {
             get { return this.responsable; }
             set { this.responsable = value; }
+        }
+
+        public int Etat
+        {
+            get { return this.etat; }
+            set { this.etat = value; }
         }
 
     }

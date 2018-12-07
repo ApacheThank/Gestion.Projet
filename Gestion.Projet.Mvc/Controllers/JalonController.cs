@@ -16,7 +16,7 @@ namespace Gestion.Projet.Mvc.Controllers
         {
             if(id != 0 && id != null)
             {
-                Session["projet"] = FactoryServices.createServices().getProjectById(id);
+                Session["projet"] = id;
                 if (TempData["alert"] != null && TempData["result"] != null)
                 {
                     ViewBag.Alert = TempData["alert"].ToString();
@@ -25,9 +25,7 @@ namespace Gestion.Projet.Mvc.Controllers
 
             } else
             {
-                Project projet = Session["projet"] as Project;
-                id = projet.Id;
-                
+                id = Convert.ToInt32(Session["projet"]);
             }
             List<Jalon> liste_jalons = FactoryServices.createServices().getJalonsByProjet(id);
             List<Utilisateur> utilisateurs = FactoryServices.createServices().getUtilisateurs();
@@ -40,8 +38,7 @@ namespace Gestion.Projet.Mvc.Controllers
         [HttpPost]
         public ActionResult Create(FormCollection collection)
         {
-            Project projet = Session["projet"] as Project;
-            int id_projet = projet.Id;
+            int id_projet = Convert.ToInt32(Session["projet"]);
             if (ModelState.IsValid)
             {
                 string libelle = collection["libelle"];
@@ -87,9 +84,8 @@ namespace Gestion.Projet.Mvc.Controllers
         [HttpPost]
         public ActionResult Edit(int id, FormCollection collection)
         {
-            Project projet = Session["projet"] as Project;
-            int id_projet = projet.Id;
-            
+            int id_projet = Convert.ToInt32(Session["projet"]);
+
             if (ModelState.IsValid)
             {
                 string libelle = collection["libelle"];
@@ -131,6 +127,7 @@ namespace Gestion.Projet.Mvc.Controllers
 
         public ActionResult Delete(int id)
         {
+            int id_projet = Convert.ToInt32(Session["projet"]);
             bool res = FactoryServices.createServices().deleteJalon(id);
             if (res)
             {
@@ -142,7 +139,7 @@ namespace Gestion.Projet.Mvc.Controllers
                 TempData["result"] = "Une erreur est survenue lors de suppression";
             }
             
-            return RedirectToAction("Index");
+            return RedirectToAction("Index","Jalon", new { @id = id_projet });
         }
     }
 }

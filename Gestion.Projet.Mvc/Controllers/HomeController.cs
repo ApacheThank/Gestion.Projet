@@ -13,6 +13,11 @@ namespace Gestion.Projet.Mvc.Controllers
     {
         public ActionResult Index()
         {
+            if (TempData["alert"] != null && TempData["result"] != null)
+            {
+                ViewBag.Alert = TempData["alert"].ToString();
+                ViewBag.Result = TempData["result"].ToString();
+            }
             List<Project> liste_projets = FactoryServices.createServices().getProjets();
             List<Utilisateur> utilisateurs = FactoryServices.createServices().getUtilisateurs();
             ViewBag.Utilisateurs = utilisateurs;
@@ -36,8 +41,16 @@ namespace Gestion.Projet.Mvc.Controllers
         public ActionResult Delete(int id)
         {
             bool res = FactoryServices.createServices().deleteProjet(id);
-            // TODO: Add delete logic here
-            Debug.Write(res);
+            if (res)
+            {
+                TempData["alert"] = "success";
+                TempData["result"] = "Projet supprimé";
+            }
+            else
+            {
+                TempData["alert"] = "danger";
+                TempData["result"] = "Une erreur est survenue lors de suppression";
+            }
             return RedirectToAction("Index");
         }
 
@@ -62,13 +75,26 @@ namespace Gestion.Projet.Mvc.Controllers
                 {
                     string user_trigramme = collection["user_tri"];
                     Utilisateur utilisateur = FactoryServices.createServices().insertUtilisateur(user_trigramme);
-                    id_responsable = utilisateur.Id;                            
-                } else
+                    id_responsable = utilisateur.Id;
+                }
+                else
                 {
                     // si non on crée un nouveau responsable et l'ajoute au nouveau
                     id_responsable = Convert.ToInt32(collection.Get("ids_users"));
                 }
-                FactoryServices.createServices().updateProjet(id, trigramme, id_responsable);
+                
+                Project projet = FactoryServices.createServices().updateProjet(id, trigramme, id_responsable);
+                if (projet.Id != 0)
+                {
+                    TempData["alert"] = "succes";
+                    TempData["result"] = "Projet a été modifé";
+                    //return RedirectToAction("Index", "Jalon");
+                }
+                else
+                {
+                    TempData["alert"] = "danger";
+                    TempData["result"] = "Une erreur est survenue lors de modification";
+                }
                 return RedirectToAction("Index");
             }
             catch
@@ -99,6 +125,17 @@ namespace Gestion.Projet.Mvc.Controllers
                     }
 
                     bool res = FactoryServices.createServices().insertProjet(trigramme, id_responsable);
+                    if (res == true)
+                    {
+                        TempData["alert"] = "succes";
+                        TempData["result"] = "Projet a été crée";
+                        //return RedirectToAction("Index", "Jalon");
+                    }
+                    else
+                    {
+                        TempData["alert"] = "danger";
+                        TempData["result"] = "Une erreur est survenue lors de l'ajout";
+                    }
                 }
                 //ViewBag.Alert = "succes";
                 //ViewBag.Result = "Medecin a été ajouté";

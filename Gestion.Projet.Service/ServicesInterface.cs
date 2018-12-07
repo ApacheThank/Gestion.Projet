@@ -27,10 +27,14 @@ namespace Gestion.Projet.Service
         bool insertJalon(string libelle, DateTime date_livraison, int id_projet, int id_responsable);
 
         List<Tache> getTachesByJalon(int id_jalon);
+        List<Tache> getTachesByExigence(int id_exigence);
+        List<Tache> getTachesByProjet(int id_projet);
         Tache getTacheById(int id);
         bool deleteTache(int id);
         Tache updateTache(int id, string libelle, string description, DateTime date_debut, DateTime date_reelle_debut, int duree, int id_tache_precente, int id_responsable, int id_jalon, int avancement);
-        bool insertTache(string libelle, string description, DateTime date_debut,int duree, int id_tache_precente, int id_responsable, int id_jalon, int avancement);
+        Tache insertTache(string libelle, string description, DateTime date_debut,int duree, int id_tache_precente, int id_responsable, int id_jalon, int avancement);
+        bool insertAssoc(int id_exigence, int id_tache);
+        int getEtatTachesByJalon(int id_jalon);
 
         List<Exigence> getExigencesByProjet(int id_projet);
         List<Exigence> getExigencesByTache(int id_tache);

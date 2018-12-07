@@ -21,6 +21,7 @@ namespace Gestion.Projet.ServiceDA
                 foreach (ProjetRow row in projetDataTable)
                 {
                     Project projet = new Project(row.id, row.trigramme, row.id_utilisateur);
+                    projet.Etat = this.getEtatProjet(row.id);
                     projet.Responsable = FactoryServicesDA.createUtilisateurServices().getUtilisateurById(row.id_utilisateur);
                     projets.Add(projet);
                 }
@@ -75,7 +76,7 @@ namespace Gestion.Projet.ServiceDA
         {
             using (ProjetTableAdapter projetTableAdapter = new ProjetTableAdapter())
             {
-                int id = projetTableAdapter.insertProjet(trigramme, id_utilisateur);
+                int id = (int)projetTableAdapter.insertProjet(trigramme, id_utilisateur);
                 bool res;
                 if (id == 0)
                 {
@@ -86,6 +87,24 @@ namespace Gestion.Projet.ServiceDA
                     res = true;
                 }
                 return res;
+            }
+        }
+
+        public int getEtatProjet(int id_projet)
+        {
+            using (ProjetTableAdapter projetTableAdapter = new ProjetTableAdapter())
+            {
+                //tacheDataTable =  tacheTableAdapter.getEtatTachesByJalon(id_jalon);
+                //TacheRow row = tacheDataTable[0];
+                int nb = (int)projetTableAdapter.getCountByProjet(id_projet);
+                int progression = 0;
+                if (nb != 0)
+                {
+                    int somme = (int)projetTableAdapter.getSumByProjet(id_projet);
+                    progression = (somme * 50) / nb;
+                }
+
+                return progression;
             }
         }
     }

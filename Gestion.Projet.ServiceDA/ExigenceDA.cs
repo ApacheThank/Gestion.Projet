@@ -87,7 +87,7 @@ namespace Gestion.Projet.ServiceDA
         {
             using (ExigenceTableAdapter exigenceTableAdapter = new ExigenceTableAdapter())
             {
-                int id = exigenceTableAdapter.insertExigence(type, libelle, id_projet);
+                int id = (int)exigenceTableAdapter.insertExigence(type, libelle, id_projet);
                 bool res;
                 if (id == 0)
                 {

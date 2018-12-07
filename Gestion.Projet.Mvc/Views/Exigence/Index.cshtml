@@ -1,0 +1,130 @@
+﻿@using Gestion.Projet.Bean
+@model List<Exigence>
+
+@{
+    ViewBag.Title = "Liste des exigences";
+}
+
+<div class="row" style="padding-top:25px;">
+    <div class="col-8 col-sm-6">
+        <a type="button" href="/Jalon/Index/@Convert.ToInt32(Session["projet"])" class="btn btn-primary">&laquo; Retour</a>
+    </div>
+</div>
+
+<h2>@ViewBag.Title</h2>
+
+@if (ViewBag.Alert != null)
+{
+    <div class="alert alert-success" role="alert">
+        @ViewBag.Result
+    </div>
+}
+<div class="row">
+    <div class="col-sm-6">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Type
+                    </th>
+                    <th>
+                        Libelle
+                    </th>
+                    <th>
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td><a role="button" href="/Tache/Index/@item.Id/1" class="list-group-item list-group-item-action">@Html.DisplayFor(modelItem => item.Type)</a></td>
+                        <td><div class="col-sm-2">@item.Libelle</div></td>
+                        <td>
+                            <a role="button" href="/Exigence/Edit/@item.Id" class="btn btn-warning">Editer</a>
+                            <a role="button" data-toggle="modal" data-target="#confirm-delete" data-href="/Exigence/Delete/@item.Id" class="btn btn-danger">Supprimer</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <input type="button" class="btn btn-default" href="#myModal" value="Ajouter" data-toggle="modal" />
+    </div>
+</div>
+
+<!-- Modal -->
+@using (Html.BeginForm("Create", "Exigence", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    <div class="modal fade" id="myModal" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ajouter une exigence</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <label for="type">Type:</label>
+                    <select id="type" class="form-control" name="type">
+                        <option value="1">
+                            Fonctionnelle
+                        </option>
+                        <option value="0">
+                            Non fonctionnelle
+                        </option>
+                    </select>
+                    <label for="libelle">Libelle:</label>
+                    <div id="libelle_select">
+                    <select id="libelle" class="form-control" name="libelle" disabled>
+                        <option value="Données">Données</option>
+                        <option value="Performance">Performance</option>
+                        <option value="Interface utilisateur">Interface utilisateur</option>
+                        <option value="Qualité">Qualité</option>
+                        <option value="Service">Service</option>
+                    </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Ajouter</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+<div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            </div>
+            <div class="modal-body">
+                Voulez-vous vraiment supprimer cette exigence ?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Non</button>
+                <a class="btn btn-danger btn-ok">Oui</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#confirm-delete').on('show.bs.modal', function (e) {
+            $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
+        });
+    });
+
+    $('#type').change(function () {
+        if ($(this).val() == '1') { // or this.value == 'volvo'
+            $("#libelle").prop('disabled', true);
+        } else {
+            $("#libelle").prop('disabled', false);
+        }
+    });
+
+</script>

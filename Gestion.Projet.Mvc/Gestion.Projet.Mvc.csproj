@@ -139,6 +139,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\ExigenceController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\JalonController.cs" />
     <Compile Include="Controllers\TacheController.cs" />
@@ -189,6 +190,8 @@
     <Content Include="Views\Jalon\Edit.cshtml" />
     <Content Include="Views\Tache\Edit.cshtml" />
     <Content Include="Views\Tache\Details.cshtml" />
+    <Content Include="Views\Exigence\Index.cshtml" />
+    <Content Include="Views\Exigence\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -95,6 +95,16 @@ namespace Gestion.Projet.Service
             return FactoryServicesDA.createTacheServices().getTachesByJalon(id_jalon);
         }
 
+        public List<Tache> getTachesByExigence(int id_exigence)
+        {
+            return FactoryServicesDA.createTacheServices().getTachesByExigence(id_exigence);
+        }
+
+        public List<Tache> getTachesByProjet(int id_projet)
+        {
+            return FactoryServicesDA.createTacheServices().getTachesByProjet(id_projet);
+        }
+
         public Tache getTacheById(int id)
         {
             return FactoryServicesDA.createTacheServices().getTacheById(id);
@@ -110,11 +120,22 @@ namespace Gestion.Projet.Service
             return FactoryServicesDA.createTacheServices().updateTache(id, libelle, description, date_debut, date_reelle_debut, duree, id_tache_precente, id_responsable, id_jalon, avancement);
         }
 
-        public bool insertTache(string libelle, string description, DateTime date_debut, int duree, int id_tache_precente, int id_responsable, int id_jalon, int avancement)
+        public Tache insertTache(string libelle, string description, DateTime date_debut, int duree, int id_tache_precente, int id_responsable, int id_jalon, int avancement)
         {
-            bool res = FactoryServicesDA.createTacheServices().insertTache(libelle, description, date_debut, duree, id_tache_precente, id_responsable, id_jalon, avancement);
-            return res;
+            Tache tache = FactoryServicesDA.createTacheServices().insertTache(libelle, description, date_debut, duree, id_tache_precente, id_responsable, id_jalon, avancement);
+            return tache;
         }
+
+        public bool insertAssoc(int id_exigence, int id_tache)
+        {
+            return FactoryServicesDA.createTacheServices().insertAssoc(id_exigence, id_tache);
+        }
+
+        public int getEtatTachesByJalon(int id_jalon)
+        {
+            return FactoryServicesDA.createTacheServices().getEtatTachesByJalon(id_jalon);
+        }
+
 
         #endregion
         #region Exigence

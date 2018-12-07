@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -11,26 +12,46 @@ namespace Gestion.Projet.Mvc.Controllers
     public class TacheController : Controller
     {
         // GET: Tache
-        public ActionResult Index(int id)
+        public ActionResult Index(int mode,int id)
         {
-            if (id != 0 && id != null)
+            List<Tache> liste_taches;
+            int id_projet = Convert.ToInt32(Session["projet"]);
+            // on fait la requête selon le menu selectionné si le paramètre passe est 1 alors ce sont les tâches de l'exigence
+            if (mode == 1)
             {
-                Session["jalon"] = FactoryServices.createServices().getJalonById(id);
-                if (TempData["alert"] != null && TempData["result"] != null)
-                {
-                    ViewBag.Alert = TempData["alert"].ToString();
-                    ViewBag.Result = TempData["result"].ToString();
-                }
-
+                ViewBag.Title = "Liste des tâches de l'exigence";
+                Session["exigence"] = id;
+                liste_taches = FactoryServices.createServices().getTachesByExigence(id);
             }
             else
             {
-                Jalon jalon = Session["jalon"] as Jalon;
-                id = jalon.Id;
+                ViewBag.Title = "Liste des tâches du jalon";
+                Session.Remove("exigence");
+                // sinon c'est l'affichage par le jalon
+                if (id != 0 && id != null)
+                {
+                    Session["jalon"] = id;
+                }
+                else
+                {
+                    id = Convert.ToInt32(Session["jalon"]);
+                }
+                liste_taches = FactoryServices.createServices().getTachesByJalon(id);
+                List<Exigence> exigences = FactoryServices.createServices().getExigencesByProjet(id_projet);
+                ViewBag.Exigences = exigences;
+
             }
-            List<Tache> liste_taches = FactoryServices.createServices().getTachesByJalon(id);
+            if (TempData["alert"] != null && TempData["result"] != null)
+            {
+                ViewBag.Alert = TempData["alert"].ToString();
+                ViewBag.Result = TempData["result"].ToString();
+            }
+            
             List<Utilisateur> utilisateurs = FactoryServices.createServices().getUtilisateurs();
+            
+            List<Tache> taches = FactoryServices.createServices().getTachesByProjet(id_projet);
             ViewBag.Utilisateurs = utilisateurs;
+            ViewBag.Taches = taches;
             return View(liste_taches);
         }
 
@@ -38,6 +59,8 @@ namespace Gestion.Projet.Mvc.Controllers
         public ActionResult Details(int id)
         {
             Tache tache = FactoryServices.createServices().getTacheById(id);
+            List<Exigence> exigences = FactoryServices.createServices().getExigencesByTache(id);
+            ViewBag.Exigences = exigences;
             return View(tache);
         }
 
@@ -51,8 +74,9 @@ namespace Gestion.Projet.Mvc.Controllers
         [HttpPost]
         public ActionResult Create(FormCollection collection)
         {
-            Jalon jalon = Session["jalon"] as Jalon;
-            int id_jalon = jalon.Id;
+            int id_jalon = Convert.ToInt32(Session["jalon"]);
+            int mode = 2;
+            int id_redirect = id_jalon;
             if (ModelState.IsValid)
             {
                 string libelle = collection["libelle"];
@@ -60,9 +84,11 @@ namespace Gestion.Projet.Mvc.Controllers
                 int duree = Convert.ToInt32(collection["duree"]);
                 int tache_precedente = Convert.ToInt32(collection.Get("tache_precedente"));
                 int id_responsable;
+                string res_chk_exigence = collection["checkbox_exigence"];
+                string res_chk_new = collection["checkbox_new"];
 
                 DateTime date_debut = Convert.ToDateTime(collection["date_debut"]);
-                if (collection.Get("ids_users") == "" || collection.Get("ids_users") == null)
+                if (res_chk_new == "on")
                 {
                     string user_trigramme = collection["user_tri"];
                     Utilisateur utilisateur = FactoryServices.createServices().insertUtilisateur(user_trigramme);
@@ -72,10 +98,29 @@ namespace Gestion.Projet.Mvc.Controllers
                 {
                     id_responsable = Convert.ToInt32(collection.Get("ids_users"));
                 }
-                int avancement = 0; // tâche non démarré
-                bool res = FactoryServices.createServices().insertTache(libelle, description, date_debut, duree, tache_precedente, id_responsable, id_jalon, avancement);
+                int avancement = 0; // tâche non démarré par défaut
+                Tache tache= FactoryServices.createServices().insertTache(libelle, description, date_debut, duree, tache_precedente, id_responsable, id_jalon, avancement);
+                int id_exigence = 0;
+                if (Session["exigence"] != null)
+                {
+                    id_exigence = Convert.ToInt32(Session["exigence"]);
+                    id_redirect = id_exigence;
+                    mode = 1;
 
-                if (res == true)
+                }
+                else
+                {
+                    if (res_chk_exigence == "on")
+                    {
+                        id_exigence = Convert.ToInt32(collection.Get("ids_exigences"));
+                    }
+                }
+                if(id_exigence != 0)
+                {
+                    bool res = FactoryServices.createServices().insertAssoc(id_exigence, tache.Id);
+                }
+
+                if (tache.Id != 0)
                 {
                     TempData["alert"] = "succes";
                     TempData["result"] = "Nouvelle tâche ajoutée";
@@ -87,16 +132,14 @@ namespace Gestion.Projet.Mvc.Controllers
                     TempData["result"] = "Une erreur est survenue lors de l'ajout";
                 }
             }
-            return RedirectToAction("Index", "Tache", new { @id = id_jalon });
+            return RedirectToAction("Index", "Tache", new { @mode = mode, @id = id_redirect });
         }
 
         // GET: Tache/Edit/5
         public ActionResult Edit(int id)
         {
-            Project projet = Session["projet"] as Project;
-            Jalon jalon = Session["jalon"] as Jalon;
-            int id_projet = projet.Id;
-            int id_jalon = jalon.Id;
+            int id_projet = Convert.ToInt32(Session["projet"]);
+            int id_jalon = Convert.ToInt32(Session["jalon"]);
             List<Utilisateur> utilisateurs = FactoryServices.createServices().getUtilisateurs();
             List<Exigence> exigences = FactoryServices.createServices().getExigencesByProjet(id_projet);
             List<Tache> taches = FactoryServices.createServices().getTachesByJalon(id_jalon);
@@ -112,8 +155,9 @@ namespace Gestion.Projet.Mvc.Controllers
         [HttpPost]
         public ActionResult Edit(int id, FormCollection collection)
         {
-            Jalon jalon = Session["jalon"] as Jalon;
-            int id_jalon = jalon.Id;
+            int id_jalon = Convert.ToInt32(Session["jalon"]);
+            int mode = 2;
+            int id_redirect = id_jalon;
 
             if (ModelState.IsValid)
             {
@@ -123,6 +167,7 @@ namespace Gestion.Projet.Mvc.Controllers
                 int id_tache_precente = Convert.ToInt32(collection.Get("tache_precedente"));
                 int avancement = Convert.ToInt32(collection.Get("avancement"));
                 int id_responsable;
+                string res_chk_exigence = collection["checkbox_exigence"];
 
                 DateTime date_debut = Convert.ToDateTime(collection["date_debut"]);
                 if (collection.Get("ids_users") == "" || collection.Get("ids_users") == null)
@@ -141,12 +186,43 @@ namespace Gestion.Projet.Mvc.Controllers
                 {
                     date_reelle_debut = Convert.ToDateTime("");
                 }
-                else { date_reelle_debut = Convert.ToDateTime(collection.Get("date_reelle")); }
+                else {
+                    date_reelle_debut = Convert.ToDateTime(collection.Get("date_reelle"));
+                    if (avancement == 0)
+                    {
+                        avancement = 1; // on considère que dès qu'on a une date réelle la tâche est en cours
+                    }
+                }
+                int id_exigence = 0;
+                if (Session["exigence"] != null)
+                {
+                    id_exigence = Convert.ToInt32(Session["exigence"]);
+                    id_redirect = id_exigence;
+                    mode = 1;
+
+                }
+                else
+                {
+                    if (res_chk_exigence == "on")
+                    {
+                        id_exigence = Convert.ToInt32(collection.Get("ids_exigences"));
+                    }
+                }
+                
                 Tache tache = FactoryServices.createServices().updateTache(id, libelle, description, date_debut, date_reelle_debut, duree, id_tache_precente, id_responsable, id_jalon, avancement);
+                int id_tache = tache.Id;
+                if (id_exigence != 0)
+                {
+                    Debug.Write("Id exigence ---->");
+                    Debug.Write(id_exigence);
+                    Debug.Write("Id tache ---->");
+                    Debug.Write(id_tache);
+                    bool res = FactoryServices.createServices().insertAssoc(id_exigence,id_tache);
+                }
                 if (tache.Id != 0)
                 {
                     TempData["alert"] = "succes";
-                    TempData["result"] = "Jalon a été modifé";
+                    TempData["result"] = "Tâche a été modifé";
                     //return RedirectToAction("Index", "Jalon");
                 }
                 else
@@ -155,17 +231,18 @@ namespace Gestion.Projet.Mvc.Controllers
                     TempData["result"] = "Une erreur est survenue lors de modification";
                 }
             }
-            return RedirectToAction("Index", "Tache", new { @id = id_jalon });
+            return RedirectToAction("Index", "Tache", new { @mode = mode, @id = id_redirect });
         }
 
         // GET: Tache/Delete/5
         public ActionResult Delete(int id)
         {
+            int id_jalon = Convert.ToInt32(Session["jalon"]);
             bool res = FactoryServices.createServices().deleteTache(id);
             if (res)
             {
                 TempData["alert"] = "success";
-                TempData["result"] = "Jalon supprimé";
+                TempData["result"] = "Tâche supprimé";
             }
             else
             {
@@ -173,23 +250,8 @@ namespace Gestion.Projet.Mvc.Controllers
                 TempData["result"] = "Une erreur est survenue lors de suppression";
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Tache", new { @id = id_jalon });
         }
 
-        // POST: Tache/Delete/5
-        [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
     }
 }

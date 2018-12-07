@@ -1,0 +1,46 @@
+﻿@using Gestion.Projet.Bean
+@model Exigence
+
+@{
+    ViewBag.Title = "Editer l'exigence";
+}
+<h3>@ViewBag.Title</h3>
+
+@using (Html.BeginForm("Edit", "Exigence", FormMethod.Post, new {@class = "form-horizontal", role = "form" }))
+{
+    <div class="row">
+        <div class="col-sm-6">
+            @Html.ValidationSummary("", new { @class = "text-danger" })
+            <label for="type">Type: (@Model =>Model.Type)</label>
+            <select id="type" class="form-control" name="type">
+
+                <option value="0">
+                    Non fonctionnelle
+                </option>
+                <option value="1">
+                    Fonctionnelle
+                </option>
+            </select>
+            <label for="libelle">Libelle:(@Model =>Model.Libelle)</label>
+            <select id="libelle" class="form-control" name="libelle">
+                <option value="Données">Données</option>
+                <option value="Performance">Performance</option>
+                <option value="Interface utilisateur">Interface utilisateur</option>
+                <option value="Qualité">Qualité</option>
+                <option value="Service">Service</option>
+            </select>
+        </div>
+        </div>
+    <button type="submit" class="btn btn-primary">Valider</button>
+}
+
+    <script type="text/javascript">
+        $('#type').change(function () {
+            if ($(this).val() == '1') { // or this.value == 'volvo'
+                $("#libelle").prop('disabled', true);
+            } else {
+                $("#libelle").prop('disabled', false);
+            }
+        });
+
+    </script>

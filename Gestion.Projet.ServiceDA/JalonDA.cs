@@ -20,7 +20,9 @@ namespace Gestion.Projet.ServiceDA
                 jalonDataTable = jalonTableAdapter.getJalonsByProjet(id_projet);
                 foreach (JalonRow row in jalonDataTable)
                 {
-                    jalons.Add(new Jalon(row.id,row.libelle,row.date_livraison,row.id_projet,row.id_responsable));
+                    Jalon jalon = new Jalon(row.id, row.libelle, row.date_livraison, row.id_projet, row.id_responsable);
+                    jalon.Etat = FactoryServicesDA.createTacheServices().getEtatTachesByJalon(row.id);
+                    jalons.Add(jalon);
                 }
                 return jalons;
             }
@@ -87,7 +89,7 @@ namespace Gestion.Projet.ServiceDA
         {
             using (JalonTableAdapter jalonTableAdapter = new JalonTableAdapter())
             {
-                int id = jalonTableAdapter.insertJalon(libelle, date_livraison,null, id_projet, id_responsable);
+                int id = (int)jalonTableAdapter.insertJalon(libelle, date_livraison,null, id_projet, id_responsable);
                 bool res;
                 if (id == 0)
                 {

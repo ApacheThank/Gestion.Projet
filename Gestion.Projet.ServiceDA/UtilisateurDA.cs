@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -44,8 +45,10 @@ namespace Gestion.Projet.ServiceDA
         {
             using (UtilisateurTableAdapter utilisateurTableAdapter = new UtilisateurTableAdapter())
             {
-                int id = utilisateurTableAdapter.insertUtilisateur(trigramme);
-                Utilisateur utilisateur = new Utilisateur(id, trigramme);
+                int id = (int)utilisateurTableAdapter.insertUtilisateur(trigramme);
+                Utilisateur utilisateur = FactoryServicesDA.createUtilisateurServices().getUtilisateurById(id);
+                Debug.Write("Id from ServiceDA-->");
+                Debug.Write(utilisateur.Id);
                 return utilisateur;
             }
         }

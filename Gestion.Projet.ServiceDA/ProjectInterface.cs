@@ -14,5 +14,6 @@ namespace Gestion.Projet.ServiceDA
         bool deleteProjet(int id);
         Project updateProjet(int id, string trigramme, int id_utilisateur);
         bool insertProjet(string trigramme, int id_utilisateur);
+        int getEtatProjet(int id_projet);
     }
 }

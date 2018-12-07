@@ -22,7 +22,7 @@
             <label for="duree">Durée:</label>
             <input type="number" class="form-control" value="@Model.Item4.Duree" id="duree" name="duree" />
             <label for="avancement">Avancement de tâche:</label>
-            <select id="avancement" class="form-control"  name="avancement">
+            <select id="avancement" class="form-control" name="avancement">
                 <option value="0">Non démarrée</option>
                 <option value="1">En cours</option>
                 <option value="2">Terminée</option>
@@ -37,10 +37,10 @@
                     </option>
                 }
             </select>
-            <label class="form-control" for="checkbox_new">Ajouter nouveau responsable: </label>
+            <label for="checkbox_new">Ajouter nouveau responsable: </label>
             <input type="checkbox" id="checkbox_new" onclick="new_user()" />
             <div id="liste">
-                <label for="ids_users">Responsable du jalon: </label>
+                <label for="ids_users">Responsable de tâche: </label>
                 <select id="ids_users" class="form-control" name="ids_users">
                     @foreach (var item in Model.Item1)
                     {
@@ -50,13 +50,32 @@
                     }
                 </select>
             </div>
+
             <div id="new_user" hidden>
                 <label for="user_tri">Trigramme du responsable:</label>
                 <input type="text" class="form-control" id="user_tri" maxlength="3" name="user_tri" />
             </div>
+            @if (Model.Item3 != null)
+            {
+                 <label for="checkbox_exigence">Ajouter une exigence:</label>
+                            <input class="form-check-input" type="checkbox" id="checkbox_exigence" name="checkbox_exigence" onclick="add_exigence()">
+                <div class="form-group row" id="exigence" hidden>
+                    <label for="ids_exigences" class="col-sm-3 col-form-label">Exigences:</label>
+                    <div class="col-sm-8">
+                        <select class="form-control" id="ids_exigences" name="ids_exigences">
+                            @foreach (var item in Model.Item3)
+                            {
+                                <option value="@item.Id">
+                                    @item.Type (@item.Libelle)
+                                </option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            }
         </div>
 </div>
-    <button type="submit" class="btn btn-primary">Ajouter</button>
+    <button type="submit" class="btn btn-primary">Valider</button>
     <script type="text/javascript">
     function new_user() {
         if ($("#checkbox_new").is(":checked")) {
@@ -67,7 +86,15 @@
             $("#new_user").hide();
         }
     }
-
+        function add_exigence() {
+            if ($("#checkbox_exigence").is(":checked")) {
+                $("#exigence").show();
+                $("#ids_exigences").prop('required', true);
+            } else {
+                $("#exigence").hide();
+                $("#ids_exigences").prop('required', false);
+            }
+        }
     </script>
 
 }

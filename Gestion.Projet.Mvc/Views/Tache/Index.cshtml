@@ -2,18 +2,31 @@
 @model List<Tache>
 
 @{
-    ViewBag.Title = "Liste des tâches";
+   
 }
-<h2>@ViewBag.Title</h2>
 
+<div class="row" style="padding-top:25px;">
+    <div class="col-8 col-sm-6">
+        <a type="button" href="/Jalon/Index/@Convert.ToInt32(Session["projet"])" class="btn btn-primary">&laquo; Retour</a>
+    </div>
+    <div class="col-8 col-sm-6">
+        <a type="button" href="/Exigence/Index/@Convert.ToInt32(Session["projet"])" class="btn btn-success">Exigences</a>
+    </div>
+</div>
 @if (ViewBag.Alert != null)
 {
-    <div class="alert alert-success" role="alert">
-        @ViewBag.Result
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="alert alert-success" role="alert">
+                @ViewBag.Result
+            </div>
+        </div>
     </div>
 }
+
+<h2>@ViewBag.Title</h2>
 <div class="row">
-    <div class="col-lg-8">
+    <div class="col-lg-10">
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -26,6 +39,9 @@
                     <th scope="col">
                         Date début
                     </th>
+                    <th scope="col">
+                        Avancement
+                    </th>
                     <th scope="col"></th>
                     <th scope="col"></th>
                 </tr>
@@ -34,13 +50,27 @@
                 @foreach (var item in Model)
                 {
                     <tr class="table-row">
-                       
+
                         <td><a role="button" href="/Tache/Details/@item.Id">@Html.DisplayFor(modelItem => item.Libelle)</a></td>
                         <td><a role="button" href="/Tache/Details/@item.Id">@Html.DisplayFor(modelItem => item.Description)</a></td>
-                        
+                        <td>@item.Date_debut</td>
+                        <td>@if (item.Avancement == 0)
+                        {
+                            <p>Non démarrée</p>
+                        } else {
+                            if(item.Avancement == 1)
+                            {
+                                <p>En cours</p>
+                            }
+                            else
+                            {
+                                <p>Terminée</p>
+                            }
+                        }
+                        </td>
                         <td>
                             <a role="button" href="/Tache/Edit/@item.Id" class="btn btn-warning">Editer</a>
-                            <a role="button" href="/Tache/Delete/@item.Id" class="btn btn-danger">Supprimer</a>
+                            <a role="button" data-toggle="modal" data-target="#confirm-delete" data-href="/Tache/Delete/@item.Id" class="btn btn-danger">Supprimer</a>
                         </td>
                     </tr>
                 }
@@ -57,37 +87,62 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Ajouter un jalon</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Nouvelle tâche</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="col-sm-5">
-                        @Html.ValidationSummary("", new { @class = "text-danger" })
-                        <label for="libelle">Libelle:</label>
-                        <input type="text" class="form-control" id="libelle" name="libelle" />
-                        <label for="description">Description:</label>
-                        <input type="text" class="form-control" id="description" name="description" />
-                        <label for="date_debut">Date de début:</label>
-                        <input type="date" class="form-control" id="date_debut" name="date_debut" />
-                        <label for="duree">Durée:</label>
-                        <input type="number" class="form-control" id="duree" name="duree" />
-                        <label for="tache_precedente">Tâche précedente(facultatif):</label>
-                        <select id="tache_precedente" class="form-control" name="tache_precedente">
-                            <option value="0">Non</option>
-                            @foreach (var item in Model)
-                            {
-                                <option value="@item.Id">
-                                    @item.Libelle
-                                </option>
-                            }
-                        </select>
-                        <label class="form-control" for="checkbox_new">Ajouter nouveau responsable: </label>
-                        <input type="checkbox" id="checkbox_new" onclick="new_user()" />
-                        <div id="liste">
-                            <label for="ids_users">Responsable du jalon: </label>
-                            <select id="ids_users" class="form-control" name="ids_users">
+                    <div class="form-group row">
+                        <label for="libelle" class="col-sm-3 col-form-label">Libelle:</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="libelle" name="libelle" placeholder="Libelle" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="description" class="col-sm-3 col-form-label">Description:</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="description" name="description" placeholder="Description" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="date_debut" class="col-sm-3 col-form-label">Date début:</label>
+                        <div class="col-sm-8">
+                            <input type="date" class="form-control" id="date_debut" name="date_debut" placeholder="Date début" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="duree" class="col-sm-3 col-form-label">Durée:</label>
+                        <div class="col-sm-8">
+                            <input type="number" class="form-control" id="duree" name="duree" min="0" placeholder="Durée" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="tache_precedente" class="col-sm-3 col-form-label">Tâche précedente:</label>
+                        <div class="col-sm-8">
+                            <select id="tache_precedente" class="form-control"  name="tache_precedente">
+                                <option value="0">Non</option>
+                                @foreach (var item in ViewBag.Taches)
+                                {
+                                    <option value="@item.Id">
+                                        @item.Libelle
+                                    </option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-3"><label class="form-check-label" for="checkbox_new">Ajouter nouveau responsable:</label></div>
+                        <div class="col-sm-8">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="checkbox_new" maxlength="3" id="checkbox_new" onclick="new_user()">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="liste">
+                        <label for="ids_users" class="col-sm-3 col-form-label">Utilisateurs:</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" id="ids_users" name="ids_users">
                                 @foreach (var item in ViewBag.Utilisateurs)
                                 {
                                     <option value="@item.Id">
@@ -96,52 +151,103 @@
                                 }
                             </select>
                         </div>
-                        <div id="new_user" hidden>
-                            <label for="user_tri">Trigramme du responsable:</label>
-                            <input type="text" class="form-control" id="user_tri" maxlength="3" name="user_tri" />
+                    </div>
+                    <div class="form-group row" id="new_user" hidden>
+                        <label for="user_tri" class="col-sm-3 col-form-label">Trigramme du responsable:</label>
+                        <div class="col-sm-8">
+                            <input type="text" maxlength="3" class="form-control" id="user_tri" name="user_tri" placeholder="Trigramme">
                         </div>
                     </div>
-                </div>
-                <div class="col-sm-5">
-                    <select id="id_ss" class="form-control" name="id_ss">
-                        @foreach (var item in ViewBag.Utilisateurs)
-                        {
-                            <option value="@item.Id">
-                                @item.Trigramme
-                            </option>
-                        }
-                    </select>
-
-                </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Ajouter</button>
+                    @if (ViewBag.Exigences != null)
+                    {
+                    <div class="form-group row">
+                        <div class="col-sm-3"><label class="form-check-label" for="checkbox_exigence">Ajouter une exigence:</label></div>
+                        <div class="col-sm-8">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="checkbox_exigence" name="checkbox_exigence" onclick="add_exigence()">
+                            </div>
+                        </div>
                     </div>
+                    <div class="form-group row" id="exigence" hidden>
+                        <label for="ids_exigences" class="col-sm-3 col-form-label">Exigences:</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" id="ids_exigences" name="ids_exigences">
+                                @foreach (var item in ViewBag.Exigences)
+                                {
+                                    <option value="@item.Id">
+                                        @item.Type @item.Libelle
+                                    </option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    }
                 </div>
-    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Ajouter</button>
+                </div>
+            </div>
         </div>
-        <style type="text/css">
+    <style type="text/css">
 
-            a {
-                text-decoration: none !important;
-                color: black;
-            }
+        a {
+            text-decoration: none !important;
+            color: black;
+        }
+
             a:hover {
                 color: black;
                 cursor: pointer;
             }
+    </style>
 
-        </style>
+
+
+}
+    <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                </div>
+                <div class="modal-body">
+                    Voulez-vous vraiment supprimer cette tâche ?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Non</button>
+                    <a class="btn btn-danger btn-ok">Oui</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script type="text/javascript">
+        $(document).ready(function () {
+            $('#confirm-delete').on('show.bs.modal', function (e) {
+                $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
+            });
+        });
+
         function new_user() {
             if ($("#checkbox_new").is(":checked")) {
                 $("#liste *").prop('disabled', true);
+                $("#new_user").prop('required', true);
                 $("#new_user").show();
             } else {
                 $("#liste *").prop('disabled', false);
+                $("#new_user").prop('required', false);
                 $("#new_user").hide();
             }
         }
 
+        function add_exigence() {
+            if ($("#checkbox_exigence").is(":checked")) {
+                $("#exigence").show();
+                $("#ids_exigences").prop('required', true);
+            } else {
+                $("#exigence").hide();
+                $("#ids_exigences").prop('required', false);
+            }
+        }
     </script>
-}

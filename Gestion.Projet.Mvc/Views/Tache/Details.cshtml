@@ -10,38 +10,10 @@
     </div>
     <div class="col-lg-5">
         <h2>Exigence de tâche</h2>
-        </div>
+    </div>
 </div>
 
 <div class="row">
-    <div class="col-lg-6">
-        <table class="table table-striped">
-            <tbody>
-                <tr><td scope="col">Libelle</td><td>@Html.DisplayFor(model => model.Libelle)</td></tr>
-                <tr>
-                    <td scope="col">Description</td><td>@Html.DisplayFor(model => model.Description)</td>
-                </tr>
-                <tr>
-                    <td scope="col">Date debut</td><td>@Html.DisplayFor(model => model.Date_debut)</td>
-                </tr>
-                <tr>
-                    <td scope="col">Duree</td><td>@Html.DisplayFor(model => model.Duree)</td>
-                </tr>
-                <tr>
-                    <td scope="col">Avancement</td><td>@Html.DisplayFor(model => model.Avancement)</td>
-                </tr>
-                <tr>
-                    <td scope="col">Tâche précedente</td><td>@Html.DisplayFor(model => model.Tache_precedente.Libelle)</td>
-                </tr>
-                <tr>
-                    <td scope="col">Responsable</td><td>@Html.DisplayFor(model => model.Responsable.Trigramme)</td>
-                </tr>
-                <tr>
-                    <td scope="col">Jalon</td><td>@Html.DisplayFor(model => model.Jalon.Libelle)</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
     <div class="col-lg-6">
         <table class="table table-striped">
             <tbody>
@@ -77,4 +49,29 @@
             </tbody>
         </table>
     </div>
+    <div class="col-lg-6">
+        <table class="table table-striped">
+            <tbody>
+                @foreach (var item in ViewBag.Exigences)
+                {
+                    <tr>
+                        <td><a role="button" href="/Tache/Index/@item.Id/1">@item.Type</a></td>
+                        <td><div class="col-sm-2">@item.Libelle</div></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </div>
+<style type="text/css">
+
+    a {
+        text-decoration: none !important;
+        color: black;
+    }
+
+        a:hover {
+            color: black;
+            cursor: pointer;
+        }
+</style>
